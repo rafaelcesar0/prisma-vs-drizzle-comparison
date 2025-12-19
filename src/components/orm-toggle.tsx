@@ -3,6 +3,9 @@
 import { cn } from '@/lib/utils'
 import { Zap, Database } from 'lucide-react'
 import { ModeToggle } from './mode-toggle'
+import { Button } from '@/components/ui/button'
+import { GithubLogo } from '@/components/logos/github-logo'
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip'
 
 type OrmType = 'drizzle' | 'prisma'
 
@@ -41,6 +44,27 @@ export function OrmToggle({ value, onChange }: OrmToggleProps) {
         </button>
       </div>
       <ModeToggle />
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant="outline"
+            size="icon"
+            asChild
+          >
+            <a
+              href="https://github.com/rafaelcesar0/prisma-vs-drizzle-comparison"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <GithubLogo className="h-[1.2rem] w-[1.2rem]" />
+              <span className="sr-only">GitHub</span>
+            </a>
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent sideOffset={6}>
+          GitHub
+        </TooltipContent>
+      </Tooltip>
     </div>
   )
 }
