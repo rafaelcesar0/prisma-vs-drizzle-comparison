@@ -125,6 +125,30 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+/* Tema Drizzle - Verde/Amarelo */
+.theme-drizzle,
+.theme-drizzle * {
+  --primary: oklch(0.85 0.22 115) !important;
+  --primary-foreground: oklch(0.18 0.03 115) !important;
+  --accent: oklch(0.92 0.12 115);
+  --accent-foreground: oklch(0.25 0.04 115);
+}
+
+/* Tema Prisma - Roxo/Azul */
+.theme-prisma,
+.theme-prisma * {
+  --primary: oklch(0.55 0.2 270) !important;
+  --primary-foreground: oklch(0.98 0.01 270) !important;
+  --accent: oklch(0.88 0.08 270);
+  --accent-foreground: oklch(0.3 0.06 270);
+}
+
+/* Transições suaves para mudança de tema */
+.theme-transition,
+.theme-transition * {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

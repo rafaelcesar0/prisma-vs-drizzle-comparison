@@ -21,6 +21,8 @@ import {
 } from '@/components/ui/collapsible'
 import { toast } from 'sonner'
 import { UserPlus, PenSquare, Loader2, Trash2, ChevronDown, X } from 'lucide-react'
+import { OrmToggle } from '@/components/orm-toggle'
+import { cn } from '@/lib/utils'
 
 type Post = {
   id: number
@@ -44,7 +46,10 @@ type Actions = {
   createPost: (formData: FormData) => Promise<{ error?: string; success?: boolean }>
   deleteUser: (userId: number) => Promise<{ error?: string; success?: boolean }>
   deletePost: (postId: number) => Promise<{ error?: string; success?: boolean }>
+  getUsers: () => Promise<User[]>
 }
+
+type OrmType = 'drizzle' | 'prisma'
 
 function calculateAge(dateString: string) {
   const today = new Date()
@@ -81,7 +86,7 @@ function UserCard({
       <CardHeader className='pb-3'>
         <div className='flex items-start justify-between'>
           <div className='flex items-center gap-3'>
-            <div className='w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-medium'>
+            <div className='w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-medium transition-colors duration-300'>
               {user.name.charAt(0).toUpperCase()}
             </div>
             <div>
@@ -169,7 +174,7 @@ function CreateUserForm({ onSubmit }: { onSubmit: (formData: FormData) => Promis
             <Label htmlFor='birthDate'>Data de Nascimento</Label>
             <Input id='birthDate' name='birthDate' type='date' required />
           </div>
-          <Button type='submit' disabled={isPending} className='w-full'>
+          <Button type='submit' disabled={isPending} className='w-full transition-colors duration-300'>
             {isPending ? <><Loader2 className='w-4 h-4 animate-spin mr-2' /> Criando...</> : 'Criar'}
           </Button>
         </form>
@@ -229,7 +234,7 @@ function CreatePostForm({ users, onSubmit }: { users: User[]; onSubmit: (formDat
             <Label htmlFor='content'>Conteúdo</Label>
             <Textarea id='content' name='content' placeholder='Conteúdo...' required rows={3} />
           </div>
-          <Button type='submit' disabled={isPending} className='w-full'>
+          <Button type='submit' disabled={isPending} className='w-full transition-colors duration-300'>
             {isPending ? <><Loader2 className='w-4 h-4 animate-spin mr-2' /> Publicando...</> : 'Publicar'}
           </Button>
         </form>
@@ -239,15 +244,34 @@ function CreatePostForm({ users, onSubmit }: { users: User[]; onSubmit: (formDat
 }
 
 export function UsersPageClient({
-  users: initialUsers,
-  actions,
-  ormName,
+  initialUsers,
+  drizzleActions,
+  prismaActions,
 }: {
-  users: User[]
-  actions: Actions
-  ormName: string
+  initialUsers: User[]
+  drizzleActions: Actions
+  prismaActions: Actions
 }) {
+  const [selectedOrm, setSelectedOrm] = useState<OrmType>('drizzle')
   const [users, setUsers] = useState(initialUsers)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const actions = selectedOrm === 'drizzle' ? drizzleActions : prismaActions
+  const ormName = selectedOrm === 'drizzle' ? 'Drizzle ORM' : 'Prisma ORM'
+
+  const handleOrmChange = async (orm: OrmType) => {
+    setSelectedOrm(orm)
+    setIsLoading(true)
+    try {
+      const newActions = orm === 'drizzle' ? drizzleActions : prismaActions
+      const newUsers = await newActions.getUsers()
+      setUsers(newUsers)
+    } catch {
+      toast.error('Erro ao carregar usuários')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const handleCreateUser = async (formData: FormData) => {
     const result = await actions.createUser(formData)
@@ -255,7 +279,8 @@ export function UsersPageClient({
       toast.error(result.error)
     } else {
       toast.success('Usuário criado!')
-      window.location.reload()
+      const newUsers = await actions.getUsers()
+      setUsers(newUsers)
     }
   }
 
@@ -265,7 +290,8 @@ export function UsersPageClient({
       toast.error(result.error)
     } else {
       toast.success('Post criado!')
-      window.location.reload()
+      const newUsers = await actions.getUsers()
+      setUsers(newUsers)
     }
   }
 
@@ -291,51 +317,58 @@ export function UsersPageClient({
   }
 
   return (
-    <main className='min-h-screen bg-background'>
+    <main className={cn('min-h-screen bg-background theme-transition', `theme-${selectedOrm}`)}>
       <div className='max-w-6xl mx-auto px-6 py-12'>
         <header className='mb-12'>
-          <div className='flex items-center gap-3 mb-4'>
-            <Badge>{ormName}</Badge>
-            <a href='/' className='text-sm text-muted-foreground hover:underline'>
-              ← Voltar
-            </a>
+          <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6'>
+            <div>
+              <p className='text-primary text-sm font-medium uppercase tracking-widest mb-2 transition-colors duration-300'>
+                Comparação de ORMs
+              </p>
+              <h1 className='text-4xl font-bold'>Usuários & Posts</h1>
+            </div>
+            <OrmToggle value={selectedOrm} onChange={handleOrmChange} />
           </div>
-          <h1 className='text-4xl font-bold mb-2'>Usuários & Posts</h1>
           <p className='text-muted-foreground'>
-            Gerenciando dados com <strong>{ormName}</strong>
+            Gerenciando dados com <Badge variant='secondary' className='transition-colors duration-300'>{ormName}</Badge>
           </p>
         </header>
 
-        <div className='grid lg:grid-cols-[1fr_350px] gap-8'>
-          <section>
-            <h2 className='text-xl font-semibold mb-6'>
-              {users.length > 0 ? `${users.length} usuário${users.length > 1 ? 's' : ''}` : 'Nenhum usuário'}
-            </h2>
+        <div className={cn(
+          'transition-opacity duration-300',
+          isLoading ? 'opacity-50 pointer-events-none' : 'opacity-100'
+        )}>
+          <div className='grid lg:grid-cols-[1fr_350px] gap-8'>
+            <section>
+              <h2 className='text-xl font-semibold mb-6'>
+                {users.length > 0 ? `${users.length} usuário${users.length > 1 ? 's' : ''}` : 'Nenhum usuário'}
+              </h2>
 
-            {users.length === 0 ? (
-              <Card className='border-dashed'>
-                <CardContent className='py-8 text-center text-muted-foreground'>
-                  Crie seu primeiro usuário
-                </CardContent>
-              </Card>
-            ) : (
-              <div className='space-y-4'>
-                {users.map((user) => (
-                  <UserCard
-                    key={user.id}
-                    user={user}
-                    onDeleteUser={handleDeleteUser}
-                    onDeletePost={handleDeletePost}
-                  />
-                ))}
-              </div>
-            )}
-          </section>
+              {users.length === 0 ? (
+                <Card className='border-dashed'>
+                  <CardContent className='py-8 text-center text-muted-foreground'>
+                    Crie seu primeiro usuário
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className='space-y-4'>
+                  {users.map((user) => (
+                    <UserCard
+                      key={user.id}
+                      user={user}
+                      onDeleteUser={handleDeleteUser}
+                      onDeletePost={handleDeletePost}
+                    />
+                  ))}
+                </div>
+              )}
+            </section>
 
-          <aside className='space-y-6 lg:sticky lg:top-6 lg:self-start'>
-            <CreateUserForm onSubmit={handleCreateUser} />
-            {users.length > 0 && <CreatePostForm users={users} onSubmit={handleCreatePost} />}
-          </aside>
+            <aside className='space-y-6 lg:sticky lg:top-6 lg:self-start'>
+              <CreateUserForm onSubmit={handleCreateUser} />
+              {users.length > 0 && <CreatePostForm users={users} onSubmit={handleCreatePost} />}
+            </aside>
+          </div>
         </div>
       </div>
     </main>

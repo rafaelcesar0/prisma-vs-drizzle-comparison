@@ -19,7 +19,7 @@ export async function createUserDrizzle(formData: FormData) {
       email,
       birthDate,
     })
-    revalidatePath('/drizzle')
+    revalidatePath('/')
     return { success: true }
   } catch (error) {
     if (error instanceof Error && error.message.includes('UNIQUE')) {
@@ -44,7 +44,7 @@ export async function createPostDrizzle(formData: FormData) {
       content,
       userId: parseInt(userId),
     })
-    revalidatePath('/drizzle')
+    revalidatePath('/')
     return { success: true }
   } catch (error) {
     return { error: 'Erro ao criar post' }
@@ -65,7 +65,7 @@ export async function getUsersDrizzle() {
 export async function deleteUserDrizzle(userId: number) {
   try {
     await db.delete(users).where(eq(users.id, userId))
-    revalidatePath('/drizzle')
+    revalidatePath('/')
     return { success: true }
   } catch (error) {
     return { error: 'Erro ao deletar usuário' }
@@ -75,7 +75,7 @@ export async function deleteUserDrizzle(userId: number) {
 export async function deletePostDrizzle(postId: number) {
   try {
     await db.delete(posts).where(eq(posts.id, postId))
-    revalidatePath('/drizzle')
+    revalidatePath('/')
     return { success: true }
   } catch (error) {
     return { error: 'Erro ao deletar post' }

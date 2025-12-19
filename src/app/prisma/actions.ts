@@ -20,7 +20,7 @@ export async function createUserPrisma(formData: FormData) {
         birthDate,
       },
     })
-    revalidatePath('/prisma')
+    revalidatePath('/')
     return { success: true }
   } catch (error) {
     if (error instanceof Error && error.message.includes('Unique')) {
@@ -47,7 +47,7 @@ export async function createPostPrisma(formData: FormData) {
         userId: parseInt(userId),
       },
     })
-    revalidatePath('/prisma')
+    revalidatePath('/')
     return { success: true }
   } catch (error) {
     return { error: 'Erro ao criar post' }
@@ -70,7 +70,7 @@ export async function deleteUserPrisma(userId: number) {
     await prisma.user.delete({
       where: { id: userId },
     })
-    revalidatePath('/prisma')
+    revalidatePath('/')
     return { success: true }
   } catch (error) {
     return { error: 'Erro ao deletar usuário' }
@@ -82,7 +82,7 @@ export async function deletePostPrisma(postId: number) {
     await prisma.post.delete({
       where: { id: postId },
     })
-    revalidatePath('/prisma')
+    revalidatePath('/')
     return { success: true }
   } catch (error) {
     return { error: 'Erro ao deletar post' }
