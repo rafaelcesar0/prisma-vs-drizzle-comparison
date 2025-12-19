@@ -22,7 +22,6 @@ export default async function DrizzlePage() {
         deletePost: deletePostDrizzle,
       }}
       ormName='Drizzle ORM'
-      ormColor='#c5f74f'
     />
   )
 }

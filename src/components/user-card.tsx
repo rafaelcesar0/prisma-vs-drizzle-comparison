@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import {
   Collapsible,
   CollapsibleContent,
@@ -10,7 +11,7 @@ import {
 } from '@/components/ui/collapsible'
 import { deleteUser, deletePost } from '@/app/actions'
 import { toast } from 'sonner'
-import { Trash2, ChevronDown, Calendar, X } from 'lucide-react'
+import { Trash2, ChevronDown, X } from 'lucide-react'
 
 type User = {
   id: number
@@ -27,15 +28,6 @@ type User = {
   }[]
 }
 
-function formatBirthDate(dateString: string) {
-  const date = new Date(dateString + 'T00:00:00')
-  return date.toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric',
-  })
-}
-
 function calculateAge(dateString: string) {
   const today = new Date()
   const birthDate = new Date(dateString + 'T00:00:00')
@@ -47,24 +39,24 @@ function calculateAge(dateString: string) {
   return age
 }
 
-export function UserCard({ user, index }: { user: User; index: number }) {
+export function UserCard({ user }: { user: User }) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
 
   const handleDeleteUser = async () => {
-    if (!confirm(`Tem certeza que deseja deletar ${user.name}?`)) return
+    if (!confirm(`Deletar ${user.name}?`)) return
     setIsDeleting(true)
     const result = await deleteUser(user.id)
     if (result.error) {
       toast.error(result.error)
     } else {
-      toast.success('Usuário deletado com sucesso')
+      toast.success('Usuário deletado')
     }
     setIsDeleting(false)
   }
 
   const handleDeletePost = async (postId: number, postTitle: string) => {
-    if (!confirm(`Deletar o post "${postTitle}"?`)) return
+    if (!confirm(`Deletar "${postTitle}"?`)) return
     const result = await deletePost(postId)
     if (result.error) {
       toast.error(result.error)
@@ -74,111 +66,64 @@ export function UserCard({ user, index }: { user: User; index: number }) {
   }
 
   return (
-    <Card
-      className="group overflow-hidden border-0 shadow-lg shadow-navy/5 hover:shadow-xl hover:shadow-navy/10 transition-all duration-500 animate-in fade-in slide-in-from-bottom-4"
-      style={{
-        fontFamily: 'var(--font-body)',
-        animationDelay: `${index * 100}ms`,
-        animationFillMode: 'backwards',
-      }}
-    >
-      <CardHeader className="pb-4">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div
-              className="w-14 h-14 rounded-2xl bg-linear-to-br from-coral to-coral-light flex items-center justify-center text-white text-xl font-semibold shadow-md"
-              style={{ fontFamily: 'var(--font-display)' }}
-            >
+    <Card>
+      <CardHeader className='pb-3'>
+        <div className='flex items-start justify-between'>
+          <div className='flex items-center gap-3'>
+            <div className='w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-medium'>
               {user.name.charAt(0).toUpperCase()}
             </div>
             <div>
-              <h3
-                className="text-xl font-semibold text-navy"
-                style={{ fontFamily: 'var(--font-display)' }}
-              >
-                {user.name}
-              </h3>
-              <p className="text-muted-foreground text-sm">{user.email}</p>
+              <h3 className='font-medium'>{user.name}</h3>
+              <p className='text-sm text-muted-foreground'>{user.email}</p>
             </div>
           </div>
           <Button
-            variant="ghost"
-            size="icon-sm"
+            variant='ghost'
+            size='icon'
             onClick={handleDeleteUser}
             disabled={isDeleting}
-            className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive hover:bg-destructive/10"
           >
-            <Trash2 className="w-4 h-4" />
+            <Trash2 className='w-4 h-4' />
           </Button>
         </div>
       </CardHeader>
 
-      <CardContent className="pt-0">
-        <div className="flex items-center gap-6 mb-4 text-sm">
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <Calendar className="w-4 h-4 text-coral" />
-            <span>{formatBirthDate(user.birthDate)}</span>
-          </div>
-          <div className="px-2 py-0.5 rounded-full bg-coral-light/50 text-coral text-xs font-medium">
-            {calculateAge(user.birthDate)} anos
-          </div>
-        </div>
+      <CardContent className='pt-0'>
+        <Badge variant='secondary' className='mb-3'>
+          {calculateAge(user.birthDate)} anos
+        </Badge>
 
         <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
           <CollapsibleTrigger asChild>
-            <button className="w-full flex items-center justify-between py-3 px-4 -mx-4 border-t border-border/50 hover:bg-cream/50 transition-colors">
-              <span className="text-sm font-medium text-navy">
-                {user.posts.length} post{user.posts.length !== 1 ? 's' : ''}
-              </span>
-              <ChevronDown
-                className={`w-5 h-5 text-muted-foreground transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
-              />
-            </button>
+            <Button variant='ghost' className='w-full justify-between px-0'>
+              <span className='text-sm'>{user.posts.length} posts</span>
+              <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+            </Button>
           </CollapsibleTrigger>
 
-          <CollapsibleContent className="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0">
+          <CollapsibleContent className='space-y-2 pt-2'>
             {user.posts.length === 0 ? (
-              <p className="text-muted-foreground text-sm py-4 text-center italic">
-                Nenhum post ainda
+              <p className='text-sm text-muted-foreground text-center py-2'>
+                Nenhum post
               </p>
             ) : (
-              <div className="pt-4 space-y-3">
-                {user.posts.map((post) => (
-                  <div
-                    key={post.id}
-                    className="group/post p-4 rounded-xl bg-cream/50 border border-border/30 hover:border-coral/30 transition-colors"
-                  >
-                    <div className="flex items-start justify-between gap-2 mb-2">
-                      <h4
-                        className="font-semibold text-navy"
-                        style={{ fontFamily: 'var(--font-display)' }}
-                      >
-                        {post.title}
-                      </h4>
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        onClick={() => handleDeletePost(post.id, post.title)}
-                        className="opacity-0 group-hover/post:opacity-100 h-6 w-6 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                      </Button>
-                    </div>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
-                      {post.content}
-                    </p>
-                    {post.createdAt && (
-                      <p className="text-xs text-muted-foreground/70 mt-2">
-                        {new Date(post.createdAt).toLocaleDateString('pt-BR', {
-                          day: '2-digit',
-                          month: 'short',
-                          year: 'numeric',
-                        })}
-                      </p>
-                    )}
+              user.posts.map((post) => (
+                <div key={post.id} className='p-3 rounded-lg bg-muted/50'>
+                  <div className='flex items-start justify-between gap-2'>
+                    <h4 className='font-medium text-sm'>{post.title}</h4>
+                    <Button
+                      variant='ghost'
+                      size='icon'
+                      className='h-6 w-6'
+                      onClick={() => handleDeletePost(post.id, post.title)}
+                    >
+                      <X className='w-3 h-3' />
+                    </Button>
                   </div>
-                ))}
-              </div>
+                  <p className='text-sm text-muted-foreground mt-1'>{post.content}</p>
+                </div>
+              ))
             )}
           </CollapsibleContent>
         </Collapsible>

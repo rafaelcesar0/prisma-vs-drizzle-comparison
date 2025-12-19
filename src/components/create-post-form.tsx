@@ -38,10 +38,8 @@ export function CreatePostForm({ users }: { users: User[] }) {
       if (result.error) {
         toast.error(result.error)
       } else {
-        toast.success('Post criado com sucesso!')
-        const form = document.getElementById(
-          'create-post-form'
-        ) as HTMLFormElement
+        toast.success('Post criado!')
+        const form = document.getElementById('create-post-form') as HTMLFormElement
         form?.reset()
         setSelectedUserId('')
       }
@@ -49,30 +47,19 @@ export function CreatePostForm({ users }: { users: User[] }) {
   }
 
   return (
-    <Card
-      className='border-0 shadow-lg shadow-navy/5 overflow-hidden'
-      style={{ fontFamily: 'var(--font-body)' }}
-    >
-      <div className='h-1 bg-linear-to-r from-navy to-navy/70' />
+    <Card>
       <CardHeader>
-        <CardTitle
-          className='text-xl text-navy flex items-center gap-3'
-          style={{ fontFamily: 'var(--font-display)' }}
-        >
-          <div className='w-8 h-8 rounded-lg bg-navy/10 flex items-center justify-center'>
-            <PenSquare className='w-4 h-4 text-navy' />
-          </div>
+        <CardTitle className='flex items-center gap-2 text-lg'>
+          <PenSquare className='w-4 h-4' />
           Novo Post
         </CardTitle>
       </CardHeader>
       <CardContent>
         <form id='create-post-form' action={handleSubmit} className='space-y-4'>
           <div className='space-y-2'>
-            <Label htmlFor='userId' className='text-navy'>
-              Autor
-            </Label>
+            <Label htmlFor='userId'>Autor</Label>
             <Select value={selectedUserId} onValueChange={setSelectedUserId}>
-              <SelectTrigger className='w-full bg-cream/30 border-border/50 focus:border-navy focus:ring-navy/20'>
+              <SelectTrigger>
                 <SelectValue placeholder='Selecione um usuário' />
               </SelectTrigger>
               <SelectContent>
@@ -86,44 +73,29 @@ export function CreatePostForm({ users }: { users: User[] }) {
           </div>
 
           <div className='space-y-2'>
-            <Label htmlFor='title' className='text-navy'>
-              Título
-            </Label>
-            <Input
-              id='title'
-              name='title'
-              placeholder='Título do post'
-              required
-              className='bg-cream/30 border-border/50 focus:border-navy focus:ring-navy/20'
-            />
+            <Label htmlFor='title'>Título</Label>
+            <Input id='title' name='title' placeholder='Título do post' required />
           </div>
 
           <div className='space-y-2'>
-            <Label htmlFor='content' className='text-navy'>
-              Conteúdo
-            </Label>
+            <Label htmlFor='content'>Conteúdo</Label>
             <Textarea
               id='content'
               name='content'
-              placeholder='Escreva seu post aqui...'
+              placeholder='Escreva seu post...'
               required
-              rows={4}
-              className='bg-cream/30 border-border/50 focus:border-navy focus:ring-navy/20 resize-none'
+              rows={3}
             />
           </div>
 
-          <Button
-            type='submit'
-            disabled={isPending}
-            className='w-full bg-navy hover:bg-navy/90 text-white font-medium shadow-md shadow-navy/20 hover:shadow-lg hover:shadow-navy/30 transition-all'
-          >
+          <Button type='submit' disabled={isPending} className='w-full'>
             {isPending ? (
               <>
-                <Loader2 className='w-4 h-4 animate-spin' />
+                <Loader2 className='w-4 h-4 animate-spin mr-2' />
                 Publicando...
               </>
             ) : (
-              'Publicar Post'
+              'Publicar'
             )}
           </Button>
         </form>

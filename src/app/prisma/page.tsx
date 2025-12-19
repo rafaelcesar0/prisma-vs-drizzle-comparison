@@ -22,7 +22,6 @@ export default async function PrismaPage() {
         deletePost: deletePostPrisma,
       }}
       ormName='Prisma ORM'
-      ormColor='#2d3748'
     />
   )
 }

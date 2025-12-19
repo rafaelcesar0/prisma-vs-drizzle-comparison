@@ -18,86 +18,46 @@ export function CreateUserForm() {
       if (result.error) {
         toast.error(result.error)
       } else {
-        toast.success('Usuário criado com sucesso!')
-        const form = document.getElementById(
-          'create-user-form'
-        ) as HTMLFormElement
+        toast.success('Usuário criado!')
+        const form = document.getElementById('create-user-form') as HTMLFormElement
         form?.reset()
       }
     })
   }
 
   return (
-    <Card
-      className='border-0 shadow-lg shadow-navy/5 overflow-hidden'
-      style={{ fontFamily: 'var(--font-body)' }}
-    >
-      <div className='h-1 bg-linear-to-r from-coral to-coral-light' />
+    <Card>
       <CardHeader>
-        <CardTitle
-          className='text-xl text-navy flex items-center gap-3'
-          style={{ fontFamily: 'var(--font-display)' }}
-        >
-          <div className='w-8 h-8 rounded-lg bg-coral-light/50 flex items-center justify-center'>
-            <UserPlus className='w-4 h-4 text-coral' />
-          </div>
+        <CardTitle className='flex items-center gap-2 text-lg'>
+          <UserPlus className='w-4 h-4' />
           Novo Usuário
         </CardTitle>
       </CardHeader>
       <CardContent>
         <form id='create-user-form' action={handleSubmit} className='space-y-4'>
           <div className='space-y-2'>
-            <Label htmlFor='name' className='text-navy'>
-              Nome
-            </Label>
-            <Input
-              id='name'
-              name='name'
-              placeholder='João Silva'
-              required
-              className='bg-cream/30 border-border/50 focus:border-coral focus:ring-coral/20'
-            />
+            <Label htmlFor='name'>Nome</Label>
+            <Input id='name' name='name' placeholder='João Silva' required />
           </div>
 
           <div className='space-y-2'>
-            <Label htmlFor='email' className='text-navy'>
-              Email
-            </Label>
-            <Input
-              id='email'
-              name='email'
-              type='email'
-              placeholder='joao@email.com'
-              required
-              className='bg-cream/30 border-border/50 focus:border-coral focus:ring-coral/20'
-            />
+            <Label htmlFor='email'>Email</Label>
+            <Input id='email' name='email' type='email' placeholder='joao@email.com' required />
           </div>
 
           <div className='space-y-2'>
-            <Label htmlFor='birthDate' className='text-navy'>
-              Data de Nascimento
-            </Label>
-            <Input
-              id='birthDate'
-              name='birthDate'
-              type='date'
-              required
-              className='bg-cream/30 border-border/50 focus:border-coral focus:ring-coral/20'
-            />
+            <Label htmlFor='birthDate'>Data de Nascimento</Label>
+            <Input id='birthDate' name='birthDate' type='date' required />
           </div>
 
-          <Button
-            type='submit'
-            disabled={isPending}
-            className='w-full bg-linear-to-r from-coral to-coral hover:from-coral/90 hover:to-coral/90 text-white font-medium shadow-md shadow-coral/20 hover:shadow-lg hover:shadow-coral/30 transition-all'
-          >
+          <Button type='submit' disabled={isPending} className='w-full'>
             {isPending ? (
               <>
-                <Loader2 className='w-4 h-4 animate-spin' />
+                <Loader2 className='w-4 h-4 animate-spin mr-2' />
                 Criando...
               </>
             ) : (
-              'Criar Usuário'
+              'Criar'
             )}
           </Button>
         </form>
