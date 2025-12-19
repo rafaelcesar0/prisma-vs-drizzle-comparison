@@ -4,6 +4,10 @@ import { ImageResponse } from "next/og";
 export const runtime = "edge";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
+export const alt = "Ultrablue - Drizzle vs Prisma (🐋)";
+
+const TWEMOJI_VERSION = "14.0.2";
+const emojiCache = new Map<string, Promise<string>>();
 
 function emojiToCodePoint(emoji: string) {
   return Array.from(emoji)
@@ -12,14 +16,35 @@ function emojiToCodePoint(emoji: string) {
 }
 
 async function twemojiDataUrl(emoji: string) {
-  const code = emojiToCodePoint(emoji);
-  const url = `https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/${code}.svg`;
-  const svg = await fetch(url).then((r) => r.text());
-  return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+  if (!emojiCache.has(emoji)) {
+    emojiCache.set(
+      emoji,
+      (async () => {
+        const code = emojiToCodePoint(emoji);
+        const url = `https://cdnjs.cloudflare.com/ajax/libs/twemoji/${TWEMOJI_VERSION}/svg/${code}.svg`;
+        const res = await fetch(url);
+
+        if (!res.ok) {
+          throw new Error(`Twemoji request failed (${res.status})`);
+        }
+
+        const svg = await res.text();
+        return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+      })()
+    );
+  }
+
+  return emojiCache.get(emoji)!;
 }
 
 export default async function OpenGraphImage() {
-  const whale = await twemojiDataUrl("🐋");
+  let whale: string | null = null;
+
+  try {
+    whale = await twemojiDataUrl("🐋");
+  } catch {
+    whale = null;
+  }
 
   return new ImageResponse(
     (
@@ -34,7 +59,11 @@ export default async function OpenGraphImage() {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 28 }}>
-          <img src={whale} width={220} height={220} alt="whale" />
+          {whale ? (
+            <img src={whale} width={220} height={220} alt="whale" />
+          ) : (
+            <div style={{ fontSize: 180, lineHeight: 1 }}>🐋</div>
+          )}
           <div style={{ display: "flex", flexDirection: "column" }}>
             <div style={{ fontSize: 64, fontWeight: 800, color: "white" }}>
               Drizzle vs Prisma

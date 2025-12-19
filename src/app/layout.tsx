@@ -14,17 +14,9 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 })
 
-const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ||
-  process.env.NEXT_PUBLIC_URL ||
-  'http://localhost:3000').replace(/\/$/, '')
-
-const ogImage = `${siteUrl}/opengraph-image`
-
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
   title: 'Ultrablue - Drizzle vs Prisma',
-  description:
-    'Comparativo técnico detalhado entre Drizzle ORM e Prisma: migrações, tipagem, performance, bundle size e ecossistema.',
+  description: 'Comparativo técnico detalhado entre Drizzle ORM e Prisma: migrações, tipagem, performance, bundle size e ecossistema.',
   icons: {
     icon: [
       {
@@ -36,13 +28,12 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Ultrablue - Drizzle vs Prisma',
     description: 'Comparativo técnico detalhado entre Drizzle ORM e Prisma',
-    url: siteUrl,
+    type: 'website',
+    locale: 'pt_BR',
     images: [
       {
-        url: ogImage,
-        width: 1200,
-        height: 630,
-        alt: 'Ultrablue - interface do comparativo Drizzle vs Prisma',
+        url: '/opengraph-image',
+        alt: '🐋',
       },
     ],
   },
@@ -50,7 +41,12 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Ultrablue - Drizzle vs Prisma',
     description: 'Comparativo técnico detalhado entre Drizzle ORM e Prisma',
-    images: [ogImage],
+    images: [
+      {
+        url: '/opengraph-image',
+        alt: '🐋',
+      },
+    ],
   },
 }
 
