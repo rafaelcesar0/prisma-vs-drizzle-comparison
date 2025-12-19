@@ -20,9 +20,19 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
 import { toast } from 'sonner'
-import { UserPlus, PenSquare, Loader2, Trash2, ChevronDown, X } from 'lucide-react'
+import {
+  UserPlus,
+  PenSquare,
+  Loader2,
+  Trash2,
+  ChevronDown,
+  X,
+} from 'lucide-react'
 import { OrmToggle } from '@/components/orm-toggle'
 import { cn } from '@/lib/utils'
+import { Calendar } from '@/components/ui/calendar'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { format } from 'date-fns'
 
 type Post = {
   id: number
@@ -42,8 +52,12 @@ type User = {
 }
 
 type Actions = {
-  createUser: (formData: FormData) => Promise<{ error?: string; success?: boolean }>
-  createPost: (formData: FormData) => Promise<{ error?: string; success?: boolean }>
+  createUser: (
+    formData: FormData
+  ) => Promise<{ error?: string; success?: boolean }>
+  createPost: (
+    formData: FormData
+  ) => Promise<{ error?: string; success?: boolean }>
   deleteUser: (userId: number) => Promise<{ error?: string; success?: boolean }>
   deletePost: (postId: number) => Promise<{ error?: string; success?: boolean }>
   getUsers: () => Promise<User[]>
@@ -56,7 +70,10 @@ function calculateAge(dateString: string) {
   const birthDate = new Date(dateString + 'T00:00:00')
   let age = today.getFullYear() - birthDate.getFullYear()
   const monthDiff = today.getMonth() - birthDate.getMonth()
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+  if (
+    monthDiff < 0 ||
+    (monthDiff === 0 && today.getDate() < birthDate.getDate())
+  ) {
     age--
   }
   return age
@@ -94,7 +111,12 @@ function UserCard({
               <p className='text-sm text-muted-foreground'>{user.email}</p>
             </div>
           </div>
-          <Button variant='ghost' size='icon' onClick={handleDelete} disabled={isDeleting}>
+          <Button
+            variant='ghost'
+            size='icon'
+            onClick={handleDelete}
+            disabled={isDeleting}
+          >
             <Trash2 className='w-4 h-4' />
           </Button>
         </div>
@@ -109,13 +131,19 @@ function UserCard({
           <CollapsibleTrigger asChild>
             <Button variant='ghost' className='w-full justify-between px-0'>
               <span className='text-sm'>{user.posts.length} posts</span>
-              <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+              <ChevronDown
+                className={`w-4 h-4 transition-transform ${
+                  isExpanded ? 'rotate-180' : ''
+                }`}
+              />
             </Button>
           </CollapsibleTrigger>
 
           <CollapsibleContent className='space-y-2 pt-2'>
             {user.posts.length === 0 ? (
-              <p className='text-sm text-muted-foreground text-center py-2'>Nenhum post</p>
+              <p className='text-sm text-muted-foreground text-center py-2'>
+                Nenhum post
+              </p>
             ) : (
               user.posts.map((post) => (
                 <div key={post.id} className='p-3 rounded-lg bg-muted/50'>
@@ -130,7 +158,9 @@ function UserCard({
                       <X className='w-3 h-3' />
                     </Button>
                   </div>
-                  <p className='text-sm text-muted-foreground mt-1'>{post.content}</p>
+                  <p className='text-sm text-muted-foreground mt-1'>
+                    {post.content}
+                  </p>
                 </div>
               ))
             )}
@@ -141,14 +171,29 @@ function UserCard({
   )
 }
 
-function CreateUserForm({ onSubmit }: { onSubmit: (formData: FormData) => Promise<void> }) {
+function CreateUserForm({
+  onSubmit,
+}: {
+  onSubmit: (formData: FormData) => Promise<void>
+}) {
   const [isPending, startTransition] = useTransition()
+  const [birthDate, setBirthDate] = useState<Date | undefined>(undefined)
+  const [isDateOpen, setIsDateOpen] = useState(false)
 
   const handleSubmit = (formData: FormData) => {
+    if (!birthDate) {
+      toast.error('Selecione a data de nascimento')
+      return
+    }
+
+    formData.set('birthDate', format(birthDate, 'yyyy-MM-dd'))
+
     startTransition(async () => {
       await onSubmit(formData)
       const form = document.getElementById('create-user-form') as HTMLFormElement
       form?.reset()
+      setBirthDate(undefined)
+      setIsDateOpen(false)
     })
   }
 
@@ -168,14 +213,61 @@ function CreateUserForm({ onSubmit }: { onSubmit: (formData: FormData) => Promis
           </div>
           <div className='space-y-2'>
             <Label htmlFor='email'>Email</Label>
-            <Input id='email' name='email' type='email' placeholder='joao@email.com' required />
+            <Input
+              id='email'
+              name='email'
+              type='email'
+              placeholder='joao@email.com'
+              required
+            />
           </div>
           <div className='space-y-2'>
             <Label htmlFor='birthDate'>Data de Nascimento</Label>
-            <Input id='birthDate' name='birthDate' type='date' required />
+            <Popover open={isDateOpen} onOpenChange={setIsDateOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  type='button'
+                  variant='outline'
+                  id='birthDate'
+                  className='w-full justify-between font-normal'
+                >
+                  {birthDate ? format(birthDate, 'dd/MM/yyyy') : 'Selecionar data'}
+                  <ChevronDown className='h-4 w-4' />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className='w-auto overflow-hidden p-0' align='start'>
+                <Calendar
+                  mode='single'
+                  selected={birthDate}
+                  captionLayout='dropdown'
+                  fromYear={1900}
+                  toYear={new Date().getFullYear()}
+                  onSelect={(date) => {
+                    setBirthDate(date ?? undefined)
+                    setIsDateOpen(false)
+                  }}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+            <input
+              type='hidden'
+              name='birthDate'
+              value={birthDate ? format(birthDate, 'yyyy-MM-dd') : ''}
+            />
           </div>
-          <Button type='submit' disabled={isPending} className='w-full transition-colors duration-300'>
-            {isPending ? <><Loader2 className='w-4 h-4 animate-spin mr-2' /> Criando...</> : 'Criar'}
+          <Button
+            type='submit'
+            disabled={isPending}
+            className='w-full transition-colors duration-300'
+          >
+            {isPending ? (
+              <>
+                <Loader2 className='w-4 h-4 animate-spin mr-2' /> Criando...
+              </>
+            ) : (
+              'Criar'
+            )}
           </Button>
         </form>
       </CardContent>
@@ -183,7 +275,13 @@ function CreateUserForm({ onSubmit }: { onSubmit: (formData: FormData) => Promis
   )
 }
 
-function CreatePostForm({ users, onSubmit }: { users: User[]; onSubmit: (formData: FormData) => Promise<void> }) {
+function CreatePostForm({
+  users,
+  onSubmit,
+}: {
+  users: User[]
+  onSubmit: (formData: FormData) => Promise<void>
+}) {
   const [isPending, startTransition] = useTransition()
   const [selectedUserId, setSelectedUserId] = useState<string>('')
 
@@ -195,7 +293,9 @@ function CreatePostForm({ users, onSubmit }: { users: User[]; onSubmit: (formDat
     formData.set('userId', selectedUserId)
     startTransition(async () => {
       await onSubmit(formData)
-      const form = document.getElementById('create-post-form') as HTMLFormElement
+      const form = document.getElementById(
+        'create-post-form'
+      ) as HTMLFormElement
       form?.reset()
       setSelectedUserId('')
     })
@@ -232,10 +332,26 @@ function CreatePostForm({ users, onSubmit }: { users: User[]; onSubmit: (formDat
           </div>
           <div className='space-y-2'>
             <Label htmlFor='content'>Conteúdo</Label>
-            <Textarea id='content' name='content' placeholder='Conteúdo...' required rows={3} />
+            <Textarea
+              id='content'
+              name='content'
+              placeholder='Conteúdo...'
+              required
+              rows={3}
+            />
           </div>
-          <Button type='submit' disabled={isPending} className='w-full transition-colors duration-300'>
-            {isPending ? <><Loader2 className='w-4 h-4 animate-spin mr-2' /> Publicando...</> : 'Publicar'}
+          <Button
+            type='submit'
+            disabled={isPending}
+            className='w-full transition-colors duration-300'
+          >
+            {isPending ? (
+              <>
+                <Loader2 className='w-4 h-4 animate-spin mr-2' /> Publicando...
+              </>
+            ) : (
+              'Publicar'
+            )}
           </Button>
         </form>
       </CardContent>
@@ -312,12 +428,22 @@ export function UsersPageClient({
       toast.error(result.error)
     } else {
       toast.success('Post deletado')
-      setUsers(users.map((u) => ({ ...u, posts: u.posts.filter((p) => p.id !== postId) })))
+      setUsers(
+        users.map((u) => ({
+          ...u,
+          posts: u.posts.filter((p) => p.id !== postId),
+        }))
+      )
     }
   }
 
   return (
-    <main className={cn('min-h-screen bg-background theme-transition', `theme-${selectedOrm}`)}>
+    <main
+      className={cn(
+        'min-h-screen bg-background theme-transition',
+        `theme-${selectedOrm}`
+      )}
+    >
       <div className='max-w-6xl mx-auto px-6 py-12'>
         <header className='mb-12'>
           <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6'>
@@ -330,18 +456,28 @@ export function UsersPageClient({
             <OrmToggle value={selectedOrm} onChange={handleOrmChange} />
           </div>
           <p className='text-muted-foreground'>
-            Gerenciando dados com <Badge variant='secondary' className='transition-colors duration-300'>{ormName}</Badge>
+            Gerenciando dados com{' '}
+            <Badge
+              variant='secondary'
+              className='transition-colors duration-300'
+            >
+              {ormName}
+            </Badge>
           </p>
         </header>
 
-        <div className={cn(
-          'transition-opacity duration-300',
-          isLoading ? 'opacity-50 pointer-events-none' : 'opacity-100'
-        )}>
+        <div
+          className={cn(
+            'transition-opacity duration-300',
+            isLoading ? 'opacity-50 pointer-events-none' : 'opacity-100'
+          )}
+        >
           <div className='grid lg:grid-cols-[1fr_350px] gap-8'>
             <section>
               <h2 className='text-xl font-semibold mb-6'>
-                {users.length > 0 ? `${users.length} usuário${users.length > 1 ? 's' : ''}` : 'Nenhum usuário'}
+                {users.length > 0
+                  ? `${users.length} usuário${users.length > 1 ? 's' : ''}`
+                  : 'Nenhum usuário'}
               </h2>
 
               {users.length === 0 ? (
@@ -366,7 +502,9 @@ export function UsersPageClient({
 
             <aside className='space-y-6 lg:sticky lg:top-6 lg:self-start'>
               <CreateUserForm onSubmit={handleCreateUser} />
-              {users.length > 0 && <CreatePostForm users={users} onSubmit={handleCreatePost} />}
+              {users.length > 0 && (
+                <CreatePostForm users={users} onSubmit={handleCreatePost} />
+              )}
             </aside>
           </div>
         </div>
