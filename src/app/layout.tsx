@@ -14,17 +14,13 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 })
 
-const siteUrl =
-  (process.env.NEXT_PUBLIC_URL || 'http://localhost:3000').replace(/\/$/, '')
-
 export const metadata: Metadata = {
   title: 'Ultrablue - Drizzle vs Prisma',
   description: 'Comparativo técnico detalhado entre Drizzle ORM e Prisma: migrações, tipagem, performance, bundle size e ecossistema.',
-  metadataBase: new URL(siteUrl),
   icons: {
     icon: [
       {
-        url: 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐋</text></svg>',
+        url: 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐳</text></svg>',
         type: 'image/svg+xml',
       },
     ],
@@ -33,22 +29,11 @@ export const metadata: Metadata = {
     title: 'Ultrablue - Drizzle vs Prisma',
     description: 'Comparativo técnico detalhado entre Drizzle ORM e Prisma',
     type: 'website',
-    url: siteUrl,
-    siteName: 'Ultrablue - Drizzle vs Prisma',
-    images: [
-      {
-        url: `${siteUrl}/og-ultrablue-drizzle-prisma.png`,
-        width: 1048,
-        height: 767,
-        alt: 'Ultrablue - interface do comparativo Drizzle vs Prisma',
-      },
-    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Ultrablue - Drizzle vs Prisma',
     description: 'Comparativo técnico detalhado entre Drizzle ORM e Prisma',
-    images: [`${siteUrl}/og-ultrablue-drizzle-prisma.png`],
   },
 }
 
