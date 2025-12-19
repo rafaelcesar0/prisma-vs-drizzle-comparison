@@ -31,7 +31,11 @@ import {
 import { OrmToggle } from '@/components/orm-toggle'
 import { cn } from '@/lib/utils'
 import { Calendar } from '@/components/ui/calendar'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import { format } from 'date-fns'
 
 type Post = {
@@ -190,7 +194,9 @@ function CreateUserForm({
 
     startTransition(async () => {
       await onSubmit(formData)
-      const form = document.getElementById('create-user-form') as HTMLFormElement
+      const form = document.getElementById(
+        'create-user-form'
+      ) as HTMLFormElement
       form?.reset()
       setBirthDate(undefined)
       setIsDateOpen(false)
@@ -231,11 +237,16 @@ function CreateUserForm({
                   id='birthDate'
                   className='w-full justify-between font-normal'
                 >
-                  {birthDate ? format(birthDate, 'dd/MM/yyyy') : 'Selecionar data'}
+                  {birthDate
+                    ? format(birthDate, 'dd/MM/yyyy')
+                    : 'Selecionar data'}
                   <ChevronDown className='h-4 w-4' />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className='w-auto overflow-hidden p-0' align='start'>
+              <PopoverContent
+                className='w-auto overflow-hidden p-0'
+                align='start'
+              >
                 <Calendar
                   mode='single'
                   selected={birthDate}
@@ -472,17 +483,16 @@ export function UsersPageClient({
             isLoading ? 'opacity-50 pointer-events-none' : 'opacity-100'
           )}
         >
-          <div className='grid lg:grid-cols-[1fr_350px] gap-8'>
-            <section>
-              <h2 className='text-xl font-semibold mb-6'>
-                {users.length > 0
-                  ? `${users.length} usuário${users.length > 1 ? 's' : ''}`
-                  : 'Nenhum usuário'}
-              </h2>
-
+          <h2 className='text-xl font-semibold mb-6'>
+            {users.length > 0
+              ? `${users.length} usuário${users.length > 1 ? 's' : ''}`
+              : 'Nenhum usuário'}
+          </h2>
+          <div className='grid gap-6 lg:grid-cols-2 lg:grid-rows-[auto_auto]'>
+            <section className='lg:row-span-2 scroll-auto lg:max-h-[88vh] overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-transparent hover:[&::-webkit-scrollbar-thumb]:bg-gray-300 dark:hover:[&::-webkit-scrollbar-thumb]:bg-gray-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:transition-colors'>
               {users.length === 0 ? (
                 <Card className='border-dashed'>
-                  <CardContent className='py-8 text-center text-muted-foreground'>
+                  <CardContent className='py-8 text-center text-muted-foreground '>
                     Crie seu primeiro usuário
                   </CardContent>
                 </Card>
@@ -500,12 +510,14 @@ export function UsersPageClient({
               )}
             </section>
 
-            <aside className='space-y-6 lg:sticky lg:top-6 lg:self-start'>
+            <div className='lg:col-start-2 lg:row-start-1'>
               <CreateUserForm onSubmit={handleCreateUser} />
-              {users.length > 0 && (
+            </div>
+            {users.length > 0 && (
+              <div className='lg:col-start-2 lg:row-start-2'>
                 <CreatePostForm users={users} onSubmit={handleCreatePost} />
-              )}
-            </aside>
+              </div>
+            )}
           </div>
         </div>
       </div>
