@@ -1,0 +1,13 @@
+.git
+.next
+node_modules
+dist
+out
+.turbo
+.cache
+local.db
+*.log
+tmp
+.env
+.env.*
+bun.lockb

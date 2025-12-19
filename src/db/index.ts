@@ -4,7 +4,7 @@ import { createClient } from '@libsql/client'
 import * as schema from './schema'
 
 const client = createClient({
-  url: process.env.DB_FILE_NAME!,
+  url: process.env.DATABASE_URL!,
 })
 
 export const db = drizzle(client, { schema })
