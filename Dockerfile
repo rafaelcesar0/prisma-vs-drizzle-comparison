@@ -15,7 +15,7 @@ RUN bun run prisma:generate
 RUN bun run build
 
 # Runtime enxuto
-FROM oven/bun:1.1-slim AS runner
+FROM oven/bun:1.3.5-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
