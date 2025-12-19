@@ -19,6 +19,17 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 import { toast } from 'sonner'
 import {
   UserPlus,
@@ -90,13 +101,12 @@ function UserCard({
 }: {
   user: User
   onDeleteUser: (userId: number) => Promise<void>
-  onDeletePost: (postId: number, title: string) => Promise<void>
+  onDeletePost: (postId: number) => Promise<void>
 }) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
 
   const handleDelete = async () => {
-    if (!confirm(`Deletar ${user.name}?`)) return
     setIsDeleting(true)
     await onDeleteUser(user.id)
     setIsDeleting(false)
@@ -115,14 +125,33 @@ function UserCard({
               <p className='text-sm text-muted-foreground'>{user.email}</p>
             </div>
           </div>
-          <Button
-            variant='ghost'
-            size='icon'
-            onClick={handleDelete}
-            disabled={isDeleting}
-          >
-            <Trash2 className='w-4 h-4' />
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant='ghost' size='icon' disabled={isDeleting}>
+                <Trash2 className='w-4 h-4' />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Deletar {user.name}?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Essa ação removerá o usuário e seus posts permanentemente.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDelete} disabled={isDeleting}>
+                  {isDeleting ? (
+                    <>
+                      <Loader2 className='w-4 h-4 animate-spin mr-2' /> Deletando...
+                    </>
+                  ) : (
+                    'Deletar'
+                  )}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </CardHeader>
 
@@ -153,14 +182,33 @@ function UserCard({
                 <div key={post.id} className='p-3 rounded-lg bg-muted/50'>
                   <div className='flex items-start justify-between gap-2'>
                     <h4 className='font-medium text-sm'>{post.title}</h4>
-                    <Button
-                      variant='ghost'
-                      size='icon'
-                      className='h-6 w-6'
-                      onClick={() => onDeletePost(post.id, post.title)}
-                    >
-                      <X className='w-3 h-3' />
-                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant='ghost'
+                          size='icon'
+                          className='h-6 w-6'
+                        >
+                          <X className='w-3 h-3' />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Deletar &quot;{post.title}&quot;?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Essa ação não pode ser desfeita.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => onDeletePost(post.id)}>
+                            Deletar
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                   <p className='text-sm text-muted-foreground mt-1'>
                     {post.content}
@@ -432,8 +480,7 @@ export function UsersPageClient({
     }
   }
 
-  const handleDeletePost = async (postId: number, title: string) => {
-    if (!confirm(`Deletar "${title}"?`)) return
+  const handleDeletePost = async (postId: number) => {
     const result = await actions.deletePost(postId)
     if (result.error) {
       toast.error(result.error)
