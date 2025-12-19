@@ -10,9 +10,16 @@ type CodeBlockProps = {
   language?: string
   fileName?: string
   className?: string
+  highlightedHtml?: string
 }
 
-export function CodeBlock({ code, language = 'txt', fileName, className }: CodeBlockProps) {
+export function CodeBlock({
+  code,
+  language = 'txt',
+  fileName,
+  className,
+  highlightedHtml,
+}: CodeBlockProps) {
   const [copied, setCopied] = useState(false)
 
   const handleCopy = async () => {
@@ -42,9 +49,18 @@ export function CodeBlock({ code, language = 'txt', fileName, className }: CodeB
           {copied ? 'Copiado' : 'Copiar'}
         </Button>
       </div>
-      <pre className='overflow-x-auto p-4 text-xs font-mono leading-relaxed'>
-        <code>{code}</code>
-      </pre>
+      {highlightedHtml ? (
+        <div className='overflow-x-auto p-4 text-xs font-mono leading-relaxed'>
+          <div
+            className='[&_pre]:m-0 [&_.shiki]:bg-transparent [&_.shiki]:p-0 [&_.shiki code]:block [&_.shiki code]:min-w-full'
+            dangerouslySetInnerHTML={{ __html: highlightedHtml }}
+          />
+        </div>
+      ) : (
+        <pre className='overflow-x-auto p-4 text-xs font-mono leading-relaxed'>
+          <code>{code}</code>
+        </pre>
+      )}
     </div>
   )
 }

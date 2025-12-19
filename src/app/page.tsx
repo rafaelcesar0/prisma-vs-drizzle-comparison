@@ -23,6 +23,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { CodeBlock } from '@/components/code-block'
+import { highlightCode } from '@/lib/highlight'
 
 export const dynamic = 'force-dynamic'
 
@@ -62,6 +63,18 @@ export default async function Home() {
     readCode('prisma.config.ts'),
   ])
 
+  const [
+    drizzleSchemaHighlighted,
+    prismaSchemaHighlighted,
+    drizzleConfigHighlighted,
+    prismaConfigHighlighted,
+  ] = await Promise.all([
+    highlightCode(drizzleSchemaCode, 'ts'),
+    highlightCode(prismaSchemaCode, 'prisma'),
+    highlightCode(drizzleConfigCode, 'ts'),
+    highlightCode(prismaConfigCode, 'ts'),
+  ])
+
   return (
     <>
       <UsersPageClient
@@ -95,6 +108,7 @@ export default async function Home() {
                   code={drizzleSchemaCode}
                   language='ts'
                   fileName='src/db/schema.ts'
+                  highlightedHtml={drizzleSchemaHighlighted}
                 />
               </CardContent>
             </Card>
@@ -111,6 +125,7 @@ export default async function Home() {
                   code={prismaSchemaCode}
                   language='prisma'
                   fileName='prisma/schema.prisma'
+                  highlightedHtml={prismaSchemaHighlighted}
                 />
               </CardContent>
             </Card>
@@ -129,6 +144,7 @@ export default async function Home() {
                   code={drizzleConfigCode}
                   language='ts'
                   fileName='drizzle.config.ts'
+                  highlightedHtml={drizzleConfigHighlighted}
                 />
               </CardContent>
             </Card>
@@ -145,6 +161,7 @@ export default async function Home() {
                   code={prismaConfigCode}
                   language='ts'
                   fileName='prisma.config.ts'
+                  highlightedHtml={prismaConfigHighlighted}
                 />
               </CardContent>
             </Card>
