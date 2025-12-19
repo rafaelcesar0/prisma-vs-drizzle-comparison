@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { Toaster } from 'sonner'
-import { ThemeProvider } from "@/components/theme-provider"
+import { ThemeProvider } from '@/components/theme-provider'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -14,9 +14,15 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 })
 
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ||
+  process.env.NEXT_PUBLIC_URL ||
+  'http://localhost:3000').replace(/\/$/, '')
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: 'Ultrablue - Drizzle vs Prisma',
-  description: 'Comparativo técnico detalhado entre Drizzle ORM e Prisma: migrações, tipagem, performance, bundle size e ecossistema.',
+  description:
+    'Comparativo técnico detalhado entre Drizzle ORM e Prisma: migrações, tipagem, performance, bundle size e ecossistema.',
   icons: {
     icon: [
       {
@@ -28,12 +34,14 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Ultrablue - Drizzle vs Prisma',
     description: 'Comparativo técnico detalhado entre Drizzle ORM e Prisma',
-    type: 'website',
+    url: siteUrl,
+    images: [{ url: `${siteUrl}/opengraph-image` }]
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Ultrablue - Drizzle vs Prisma',
     description: 'Comparativo técnico detalhado entre Drizzle ORM e Prisma',
+    images: [`${siteUrl}/opengraph-image`],
   },
 }
 
