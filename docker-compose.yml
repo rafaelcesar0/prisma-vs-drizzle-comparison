@@ -4,10 +4,11 @@ services:
   app:
     build: .
     ports:
-      - '3000:3000'
+      - '3001:3001'
     environment:
       DATABASE_URL: file:/data/local.db
       DB_FILE_NAME: file:/data/local.db
+      PORT: 3001
     volumes:
       - ./data:/data
     command: ["./docker-entrypoint.sh"]
