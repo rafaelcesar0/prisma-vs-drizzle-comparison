@@ -94,7 +94,7 @@ export default async function Home() {
   return (
     <>
       <header className="flex items-center gap-1 px-4 py-4 sm:px-6">
-        <span className='text-2xl' aria-label="baleia" role="img">🐳</span>
+        <span className='text-3xl' aria-label="baleia" role="img">🐋</span>
         <span className="text-2xl font-bold text-sky-400">Ultrablue</span>
       </header>
 
