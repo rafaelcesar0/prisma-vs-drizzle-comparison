@@ -18,6 +18,8 @@ const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ||
   process.env.NEXT_PUBLIC_URL ||
   'http://localhost:3000').replace(/\/$/, '')
 
+const ogImage = `${siteUrl}/og-ultrablue-drizzle-prisma.png`
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: 'Ultrablue - Drizzle vs Prisma',
@@ -35,13 +37,13 @@ export const metadata: Metadata = {
     title: 'Ultrablue - Drizzle vs Prisma',
     description: 'Comparativo técnico detalhado entre Drizzle ORM e Prisma',
     url: siteUrl,
-    images: [{ url: `${siteUrl}/opengraph-image` }]
+    images: [{ url: ogImage, width: 1048, height: 767, alt: 'Ultrablue - interface do comparativo Drizzle vs Prisma' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Ultrablue - Drizzle vs Prisma',
     description: 'Comparativo técnico detalhado entre Drizzle ORM e Prisma',
-    images: [`${siteUrl}/opengraph-image`],
+    images: [ogImage],
   },
 }
 
