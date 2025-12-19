@@ -14,10 +14,13 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 })
 
+const siteUrl =
+  (process.env.NEXT_PUBLIC_URL || 'http://localhost:3000').replace(/\/$/, '')
+
 export const metadata: Metadata = {
   title: 'Ultrablue - Drizzle vs Prisma',
   description: 'Comparativo técnico detalhado entre Drizzle ORM e Prisma: migrações, tipagem, performance, bundle size e ecossistema.',
-  metadataBase: new URL(process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'),
+  metadataBase: new URL(siteUrl),
   icons: {
     icon: [
       {
@@ -30,9 +33,11 @@ export const metadata: Metadata = {
     title: 'Ultrablue - Drizzle vs Prisma',
     description: 'Comparativo técnico detalhado entre Drizzle ORM e Prisma',
     type: 'website',
+    url: siteUrl,
+    siteName: 'Ultrablue - Drizzle vs Prisma',
     images: [
       {
-        url: '/ultrablue-drizzle-prisma.png',
+        url: `${siteUrl}/og-ultrablue-drizzle-prisma.png`,
         width: 1048,
         height: 767,
         alt: 'Ultrablue - interface do comparativo Drizzle vs Prisma',
@@ -43,7 +48,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Ultrablue - Drizzle vs Prisma',
     description: 'Comparativo técnico detalhado entre Drizzle ORM e Prisma',
-    images: ['/ultrablue-drizzle-prisma.png'],
+    images: [`${siteUrl}/og-ultrablue-drizzle-prisma.png`],
   },
 }
 
@@ -53,7 +58,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang='en' suppressHydrationWarning data-lt-installed>
+    <html lang='pt-BR' suppressHydrationWarning data-lt-installed>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
