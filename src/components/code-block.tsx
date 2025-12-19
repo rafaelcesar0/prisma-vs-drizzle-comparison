@@ -34,7 +34,7 @@ export function CodeBlock({
 
   return (
     <div className={cn('relative rounded-lg border bg-muted/40', className)}>
-      <div className='flex items-center justify-between border-b px-4 py-2 text-xs text-muted-foreground'>
+      <div className='flex items-center justify-between border-b px-3 py-1.5 sm:px-4 sm:py-2 text-xs text-muted-foreground'>
         <span className='font-medium text-foreground'>
           {fileName ?? `.${language}`}
         </span>
@@ -50,14 +50,14 @@ export function CodeBlock({
         </Button>
       </div>
       {highlightedHtml ? (
-        <div className='overflow-x-auto p-4 text-xs font-mono leading-relaxed'>
+        <div className='overflow-x-auto p-3 sm:p-4 text-[11px] sm:text-xs font-mono leading-relaxed'>
           <div
             className='[&_pre]:m-0 [&_.shiki]:bg-transparent [&_.shiki]:p-0 [&_.shiki code]:block [&_.shiki code]:min-w-full'
             dangerouslySetInnerHTML={{ __html: highlightedHtml }}
           />
         </div>
       ) : (
-        <pre className='overflow-x-auto p-4 text-xs font-mono leading-relaxed'>
+        <pre className='overflow-x-auto p-3 sm:p-4 text-[11px] sm:text-xs font-mono leading-relaxed'>
           <code>{code}</code>
         </pre>
       )}

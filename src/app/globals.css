@@ -157,3 +157,12 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Shiki dual theme support */
+.shiki span {
+  color: var(--shiki-light);
+}
+
+.dark .shiki span {
+  color: var(--shiki-dark);
+}

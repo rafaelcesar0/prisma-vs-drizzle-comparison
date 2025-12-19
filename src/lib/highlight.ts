@@ -1,12 +1,14 @@
 import { codeToHtml } from 'shiki'
 
-const THEME = 'github-dark-default'
-
 export async function highlightCode(code: string, lang: string) {
   try {
     const html = await codeToHtml(code, {
       lang,
-      theme: THEME,
+      themes: {
+        light: 'github-light',
+        dark: 'github-dark',
+      },
+      defaultColor: false,
     })
 
     // Remove inline background to let the container style control it.

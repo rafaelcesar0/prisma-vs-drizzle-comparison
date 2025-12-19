@@ -100,26 +100,26 @@ export default async function Home() {
       />
 
       <section className='border-t bg-background'>
-        <div className='max-w-6xl mx-auto px-6 py-12 space-y-6'>
-          <div className='space-y-2'>
-            <p className='text-primary text-sm font-medium uppercase tracking-widest'>
+        <div className='max-w-6xl mx-auto px-4 py-6 sm:px-6 sm:py-12 space-y-4 sm:space-y-6'>
+          <div className='space-y-1 sm:space-y-2'>
+            <p className='text-primary text-xs sm:text-sm font-medium uppercase tracking-widest'>
               Comparativo de código
             </p>
-            <h2 className='text-3xl font-bold'>Drizzle x Prisma</h2>
-            <p className='text-muted-foreground'>
+            <h2 className='text-xl sm:text-3xl font-bold'>Drizzle x Prisma</h2>
+            <p className='text-sm sm:text-base text-muted-foreground'>
               Schema e configuração lado a lado, com pontos rápidos sobre o que muda em cada ORM.
             </p>
           </div>
 
-          <div className='grid lg:grid-cols-2 gap-4'>
-            <Card className='h-full'>
-              <CardHeader>
-                <CardTitle>Schema — Drizzle</CardTitle>
-                <CardDescription>
+          <div className='grid lg:grid-cols-2 gap-3 sm:gap-4'>
+            <Card className='h-full min-w-0 overflow-hidden'>
+              <CardHeader className='p-4 sm:p-6'>
+                <CardTitle className='text-base sm:text-lg'>Schema — Drizzle</CardTitle>
+                <CardDescription className='text-xs sm:text-sm'>
                   Tipagem direto em TypeScript, relations declaradas com helpers.
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className='overflow-hidden p-4 pt-0 sm:p-6 sm:pt-0'>
                 <CodeBlock
                   code={drizzleSchemaCode}
                   language='ts'
@@ -129,14 +129,14 @@ export default async function Home() {
               </CardContent>
             </Card>
 
-            <Card className='h-full'>
-              <CardHeader>
-                <CardTitle>Schema — Prisma</CardTitle>
-                <CardDescription>
+            <Card className='h-full min-w-0 overflow-hidden'>
+              <CardHeader className='p-4 sm:p-6'>
+                <CardTitle className='text-base sm:text-lg'>Schema — Prisma</CardTitle>
+                <CardDescription className='text-xs sm:text-sm'>
                   DSL própria com mapeamento para snake_case via @map.
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className='overflow-hidden p-4 pt-0 sm:p-6 sm:pt-0'>
                 <CodeBlock
                   code={prismaSchemaCode}
                   language='prisma'
@@ -147,15 +147,15 @@ export default async function Home() {
             </Card>
           </div>
 
-          <div className='grid lg:grid-cols-2 gap-4'>
-            <Card className='h-full'>
-              <CardHeader>
-                <CardTitle>Config — Drizzle</CardTitle>
-                <CardDescription>
+          <div className='grid lg:grid-cols-2 gap-3 sm:gap-4'>
+            <Card className='h-full min-w-0 overflow-hidden'>
+              <CardHeader className='p-4 sm:p-6'>
+                <CardTitle className='text-base sm:text-lg'>Config — Drizzle</CardTitle>
+                <CardDescription className='text-xs sm:text-sm'>
                   Usa drizzle-kit apontando para o schema em TS e pasta de migrações local.
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className='overflow-hidden p-4 pt-0 sm:p-6 sm:pt-0'>
                 <CodeBlock
                   code={drizzleConfigCode}
                   language='ts'
@@ -165,14 +165,14 @@ export default async function Home() {
               </CardContent>
             </Card>
 
-            <Card className='h-full'>
-              <CardHeader>
-                <CardTitle>Config — Prisma</CardTitle>
-                <CardDescription>
+            <Card className='h-full min-w-0 overflow-hidden'>
+              <CardHeader className='p-4 sm:p-6'>
+                <CardTitle className='text-base sm:text-lg'>Config — Prisma</CardTitle>
+                <CardDescription className='text-xs sm:text-sm'>
                   Define schema, migrations em prisma/migrations e lê DATABASE_URL.
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className='overflow-hidden p-4 pt-0 sm:p-6 sm:pt-0'>
                 <CodeBlock
                   code={prismaConfigCode}
                   language='ts'
@@ -183,25 +183,25 @@ export default async function Home() {
             </Card>
           </div>
 
-          <div className='space-y-2'>
-            <p className='text-primary text-sm font-medium uppercase tracking-widest'>
+          <div className='space-y-1 sm:space-y-2'>
+            <p className='text-primary text-xs sm:text-sm font-medium uppercase tracking-widest'>
               Clients
             </p>
-            <h3 className='text-2xl font-semibold'>Instanciação das conexões</h3>
-            <p className='text-muted-foreground'>
+            <h3 className='text-lg sm:text-2xl font-semibold'>Instanciação das conexões</h3>
+            <p className='text-sm sm:text-base text-muted-foreground'>
               Como cada ORM cria o client conectado ao SQLite/libSQL e expõe helpers tipados.
             </p>
           </div>
 
-          <div className='grid lg:grid-cols-2 gap-4'>
-            <Card className='h-full'>
-              <CardHeader>
-                <CardTitle>Client — Drizzle</CardTitle>
-                <CardDescription>
+          <div className='grid lg:grid-cols-2 gap-3 sm:gap-4'>
+            <Card className='h-full min-w-0 overflow-hidden'>
+              <CardHeader className='p-4 sm:p-6'>
+                <CardTitle className='text-base sm:text-lg'>Client — Drizzle</CardTitle>
+                <CardDescription className='text-xs sm:text-sm'>
                   Conecta com <code className='font-mono'>@libsql/client</code>, injeta o schema e reexporta tabelas.
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className='overflow-hidden p-4 pt-0 sm:p-6 sm:pt-0'>
                 <CodeBlock
                   code={drizzleClientCode}
                   language='ts'
@@ -211,14 +211,14 @@ export default async function Home() {
               </CardContent>
             </Card>
 
-            <Card className='h-full'>
-              <CardHeader>
-                <CardTitle>Client — Prisma</CardTitle>
-                <CardDescription>
+            <Card className='h-full min-w-0 overflow-hidden'>
+              <CardHeader className='p-4 sm:p-6'>
+                <CardTitle className='text-base sm:text-lg'>Client — Prisma</CardTitle>
+                <CardDescription className='text-xs sm:text-sm'>
                   Usa <code className='font-mono'>PrismaLibSql</code> como adapter e instancia o client gerado.
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className='overflow-hidden p-4 pt-0 sm:p-6 sm:pt-0'>
                 <CodeBlock
                   code={prismaClientCode}
                   language='ts'
@@ -229,25 +229,25 @@ export default async function Home() {
             </Card>
           </div>
 
-          <div className='space-y-2'>
-            <p className='text-primary text-sm font-medium uppercase tracking-widest'>
+          <div className='space-y-1 sm:space-y-2'>
+            <p className='text-primary text-xs sm:text-sm font-medium uppercase tracking-widest'>
               Requisições CRUD
             </p>
-            <h3 className='text-2xl font-semibold'>Actions server lado a lado</h3>
-            <p className='text-muted-foreground'>
+            <h3 className='text-lg sm:text-2xl font-semibold'>Actions server lado a lado</h3>
+            <p className='text-sm sm:text-base text-muted-foreground'>
               Como o fluxo de criar, ler e deletar é escrito em cada ORM.
             </p>
           </div>
 
-          <div className='grid lg:grid-cols-2 gap-4'>
-            <Card className='h-full'>
-              <CardHeader>
-                <CardTitle>CRUD — Drizzle</CardTitle>
-                <CardDescription>
+          <div className='grid lg:grid-cols-2 gap-3 sm:gap-4'>
+            <Card className='h-full min-w-0 overflow-hidden'>
+              <CardHeader className='p-4 sm:p-6'>
+                <CardTitle className='text-base sm:text-lg'>CRUD — Drizzle</CardTitle>
+                <CardDescription className='text-xs sm:text-sm'>
                   Query builder em TS usando <code className='font-mono'>db.insert</code>, <code className='font-mono'>db.query</code> e helpers como <code className='font-mono'>eq</code>.
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className='overflow-hidden p-4 pt-0 sm:p-6 sm:pt-0'>
                 <CodeBlock
                   code={drizzleActionsCode}
                   language='ts'
@@ -257,14 +257,14 @@ export default async function Home() {
               </CardContent>
             </Card>
 
-            <Card className='h-full'>
-              <CardHeader>
-                <CardTitle>CRUD — Prisma</CardTitle>
-                <CardDescription>
+            <Card className='h-full min-w-0 overflow-hidden'>
+              <CardHeader className='p-4 sm:p-6'>
+                <CardTitle className='text-base sm:text-lg'>CRUD — Prisma</CardTitle>
+                <CardDescription className='text-xs sm:text-sm'>
                   Client gerado com métodos declarativos (<code className='font-mono'>prisma.user.create</code>, <code className='font-mono'>findMany</code>) e inclusão de relações via <code className='font-mono'>include</code>.
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className='overflow-hidden p-4 pt-0 sm:p-6 sm:pt-0'>
                 <CodeBlock
                   code={prismaActionsCode}
                   language='ts'
@@ -276,9 +276,9 @@ export default async function Home() {
           </div>
 
           <Card>
-            <CardHeader>
-              <CardTitle>Análise</CardTitle>
-              <CardDescription>Observações focadas em DX, performance e operação.</CardDescription>
+            <CardHeader className='p-4 sm:p-6'>
+              <CardTitle className='text-base sm:text-lg'>Análise</CardTitle>
+              <CardDescription className='text-xs sm:text-sm'>Observações focadas em DX, performance e operação.</CardDescription>
             </CardHeader>
             <CardContent>
               <ul className='list-disc pl-5 space-y-2 text-sm text-muted-foreground'>

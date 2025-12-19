@@ -30,6 +30,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 import { toast } from 'sonner'
 import {
   UserPlus,
@@ -38,6 +45,7 @@ import {
   Trash2,
   ChevronDown,
   X,
+  Plus,
 } from 'lucide-react'
 import { OrmToggle } from '@/components/orm-toggle'
 import { cn } from '@/lib/utils'
@@ -139,11 +147,14 @@ function UserCard({
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
+                <AlertDialogCancel disabled={isDeleting}>
+                  Cancelar
+                </AlertDialogCancel>
                 <AlertDialogAction onClick={handleDelete} disabled={isDeleting}>
                   {isDeleting ? (
                     <>
-                      <Loader2 className='w-4 h-4 animate-spin mr-2' /> Deletando...
+                      <Loader2 className='w-4 h-4 animate-spin mr-2' />{' '}
+                      Deletando...
                     </>
                   ) : (
                     'Deletar'
@@ -184,11 +195,7 @@ function UserCard({
                     <h4 className='font-medium text-sm'>{post.title}</h4>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button
-                          variant='ghost'
-                          size='icon'
-                          className='h-6 w-6'
-                        >
+                        <Button variant='ghost' size='icon' className='h-6 w-6'>
                           <X className='w-3 h-3' />
                         </Button>
                       </AlertDialogTrigger>
@@ -203,7 +210,9 @@ function UserCard({
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => onDeletePost(post.id)}>
+                          <AlertDialogAction
+                            onClick={() => onDeletePost(post.id)}
+                          >
                             Deletar
                           </AlertDialogAction>
                         </AlertDialogFooter>
@@ -225,8 +234,10 @@ function UserCard({
 
 function CreateUserForm({
   onSubmit,
+  variant = 'card',
 }: {
   onSubmit: (formData: FormData) => Promise<void>
+  variant?: 'card' | 'inline'
 }) {
   const [isPending, startTransition] = useTransition()
   const [birthDate, setBirthDate] = useState<Date | undefined>(undefined)
@@ -251,6 +262,82 @@ function CreateUserForm({
     })
   }
 
+  const formContent = (
+    <form id='create-user-form' action={handleSubmit} className='space-y-4'>
+      <div className='space-y-2'>
+        <Label htmlFor='name'>Nome</Label>
+        <Input id='name' name='name' placeholder='João Silva' required />
+      </div>
+      <div className='space-y-2'>
+        <Label htmlFor='email'>Email</Label>
+        <Input
+          id='email'
+          name='email'
+          type='email'
+          placeholder='joao@email.com'
+          required
+        />
+      </div>
+      <div className='space-y-2'>
+        <Label htmlFor='birthDate'>Data de Nascimento</Label>
+        <Popover open={isDateOpen} onOpenChange={setIsDateOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              type='button'
+              variant='outline'
+              id='birthDate'
+              className='w-full justify-between font-normal'
+            >
+              {birthDate
+                ? format(birthDate, 'dd/MM/yyyy')
+                : 'Selecionar data'}
+              <ChevronDown className='h-4 w-4' />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent
+            className='w-auto overflow-hidden p-0'
+            align='start'
+          >
+            <Calendar
+              mode='single'
+              selected={birthDate}
+              captionLayout='dropdown'
+              fromYear={1900}
+              toYear={new Date().getFullYear()}
+              onSelect={(date) => {
+                setBirthDate(date ?? undefined)
+                setIsDateOpen(false)
+              }}
+              initialFocus
+            />
+          </PopoverContent>
+        </Popover>
+        <input
+          type='hidden'
+          name='birthDate'
+          value={birthDate ? format(birthDate, 'yyyy-MM-dd') : ''}
+        />
+      </div>
+      <Button
+        type='submit'
+        disabled={isPending}
+        className='w-full transition-colors duration-300'
+      >
+        {isPending ? (
+          <>
+            <Loader2 className='w-4 h-4 animate-spin mr-2' /> Criando...
+          </>
+        ) : (
+          'Criar'
+        )}
+      </Button>
+    </form>
+  )
+
+  if (variant === 'inline') {
+    return formContent
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -259,77 +346,7 @@ function CreateUserForm({
           Novo Usuário
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <form id='create-user-form' action={handleSubmit} className='space-y-4'>
-          <div className='space-y-2'>
-            <Label htmlFor='name'>Nome</Label>
-            <Input id='name' name='name' placeholder='João Silva' required />
-          </div>
-          <div className='space-y-2'>
-            <Label htmlFor='email'>Email</Label>
-            <Input
-              id='email'
-              name='email'
-              type='email'
-              placeholder='joao@email.com'
-              required
-            />
-          </div>
-          <div className='space-y-2'>
-            <Label htmlFor='birthDate'>Data de Nascimento</Label>
-            <Popover open={isDateOpen} onOpenChange={setIsDateOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  type='button'
-                  variant='outline'
-                  id='birthDate'
-                  className='w-full justify-between font-normal'
-                >
-                  {birthDate
-                    ? format(birthDate, 'dd/MM/yyyy')
-                    : 'Selecionar data'}
-                  <ChevronDown className='h-4 w-4' />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                className='w-auto overflow-hidden p-0'
-                align='start'
-              >
-                <Calendar
-                  mode='single'
-                  selected={birthDate}
-                  captionLayout='dropdown'
-                  fromYear={1900}
-                  toYear={new Date().getFullYear()}
-                  onSelect={(date) => {
-                    setBirthDate(date ?? undefined)
-                    setIsDateOpen(false)
-                  }}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-            <input
-              type='hidden'
-              name='birthDate'
-              value={birthDate ? format(birthDate, 'yyyy-MM-dd') : ''}
-            />
-          </div>
-          <Button
-            type='submit'
-            disabled={isPending}
-            className='w-full transition-colors duration-300'
-          >
-            {isPending ? (
-              <>
-                <Loader2 className='w-4 h-4 animate-spin mr-2' /> Criando...
-              </>
-            ) : (
-              'Criar'
-            )}
-          </Button>
-        </form>
-      </CardContent>
+      <CardContent>{formContent}</CardContent>
     </Card>
   )
 }
@@ -337,9 +354,11 @@ function CreateUserForm({
 function CreatePostForm({
   users,
   onSubmit,
+  variant = 'card',
 }: {
   users: User[]
   onSubmit: (formData: FormData) => Promise<void>
+  variant?: 'card' | 'inline'
 }) {
   const [isPending, startTransition] = useTransition()
   const [selectedUserId, setSelectedUserId] = useState<string>('')
@@ -360,6 +379,57 @@ function CreatePostForm({
     })
   }
 
+  const formContent = (
+    <form id='create-post-form' action={handleSubmit} className='space-y-4'>
+      <div className='space-y-2'>
+        <Label htmlFor='userId'>Autor</Label>
+        <Select value={selectedUserId} onValueChange={setSelectedUserId}>
+          <SelectTrigger>
+            <SelectValue placeholder='Selecione' />
+          </SelectTrigger>
+          <SelectContent>
+            {users.map((user) => (
+              <SelectItem key={user.id} value={String(user.id)}>
+                {user.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div className='space-y-2'>
+        <Label htmlFor='title'>Título</Label>
+        <Input id='title' name='title' placeholder='Título' required />
+      </div>
+      <div className='space-y-2'>
+        <Label htmlFor='content'>Conteúdo</Label>
+        <Textarea
+          id='content'
+          name='content'
+          placeholder='Conteúdo...'
+          required
+          rows={3}
+        />
+      </div>
+      <Button
+        type='submit'
+        disabled={isPending}
+        className='w-full transition-colors duration-300'
+      >
+        {isPending ? (
+          <>
+            <Loader2 className='w-4 h-4 animate-spin mr-2' /> Publicando...
+          </>
+        ) : (
+          'Publicar'
+        )}
+      </Button>
+    </form>
+  )
+
+  if (variant === 'inline') {
+    return formContent
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -368,52 +438,7 @@ function CreatePostForm({
           Novo Post
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <form id='create-post-form' action={handleSubmit} className='space-y-4'>
-          <div className='space-y-2'>
-            <Label htmlFor='userId'>Autor</Label>
-            <Select value={selectedUserId} onValueChange={setSelectedUserId}>
-              <SelectTrigger>
-                <SelectValue placeholder='Selecione' />
-              </SelectTrigger>
-              <SelectContent>
-                {users.map((user) => (
-                  <SelectItem key={user.id} value={String(user.id)}>
-                    {user.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className='space-y-2'>
-            <Label htmlFor='title'>Título</Label>
-            <Input id='title' name='title' placeholder='Título' required />
-          </div>
-          <div className='space-y-2'>
-            <Label htmlFor='content'>Conteúdo</Label>
-            <Textarea
-              id='content'
-              name='content'
-              placeholder='Conteúdo...'
-              required
-              rows={3}
-            />
-          </div>
-          <Button
-            type='submit'
-            disabled={isPending}
-            className='w-full transition-colors duration-300'
-          >
-            {isPending ? (
-              <>
-                <Loader2 className='w-4 h-4 animate-spin mr-2' /> Publicando...
-              </>
-            ) : (
-              'Publicar'
-            )}
-          </Button>
-        </form>
-      </CardContent>
+      <CardContent>{formContent}</CardContent>
     </Card>
   )
 }
@@ -430,6 +455,8 @@ export function UsersPageClient({
   const [selectedOrm, setSelectedOrm] = useState<OrmType>('drizzle')
   const [users, setUsers] = useState(initialUsers)
   const [isLoading, setIsLoading] = useState(false)
+  const [isUserDialogOpen, setIsUserDialogOpen] = useState(false)
+  const [isPostDialogOpen, setIsPostDialogOpen] = useState(false)
 
   const actions = selectedOrm === 'drizzle' ? drizzleActions : prismaActions
   const ormName = selectedOrm === 'drizzle' ? 'Drizzle ORM' : 'Prisma ORM'
@@ -456,6 +483,7 @@ export function UsersPageClient({
       toast.success('Usuário criado!')
       const newUsers = await actions.getUsers()
       setUsers(newUsers)
+      setIsUserDialogOpen(false)
     }
   }
 
@@ -467,6 +495,7 @@ export function UsersPageClient({
       toast.success('Post criado!')
       const newUsers = await actions.getUsers()
       setUsers(newUsers)
+      setIsPostDialogOpen(false)
     }
   }
 
@@ -502,18 +531,18 @@ export function UsersPageClient({
         `theme-${selectedOrm}`
       )}
     >
-      <div className='max-w-6xl mx-auto px-6 py-12'>
-        <header className='mb-12'>
-          <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6'>
+      <div className='max-w-6xl mx-auto px-4 py-6 sm:px-6 sm:py-12'>
+        <header className='mb-6 sm:mb-12'>
+          <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6'>
             <div>
-              <p className='text-primary text-sm font-medium uppercase tracking-widest mb-2 transition-colors duration-300'>
+              <p className='text-primary text-xs sm:text-sm font-medium uppercase tracking-widest mb-1 sm:mb-2 transition-colors duration-300'>
                 Comparação de ORMs
               </p>
-              <h1 className='text-4xl font-bold'>Usuários & Posts</h1>
+              <h1 className='text-2xl sm:text-4xl font-bold'>Usuários & Posts</h1>
             </div>
             <OrmToggle value={selectedOrm} onChange={handleOrmChange} />
           </div>
-          <p className='text-muted-foreground'>
+          <p className='text-sm sm:text-base text-muted-foreground'>
             Gerenciando dados com{' '}
             <Badge
               variant='secondary'
@@ -530,11 +559,53 @@ export function UsersPageClient({
             isLoading ? 'opacity-50 pointer-events-none' : 'opacity-100'
           )}
         >
-          <h2 className='text-xl font-semibold mb-6'>
-            {users.length > 0
-              ? `${users.length} usuário${users.length > 1 ? 's' : ''}`
-              : 'Nenhum usuário'}
-          </h2>
+          <div className='flex items-center justify-between gap-2 sm:gap-4 mb-4 sm:mb-6'>
+            <h2 className='text-lg sm:text-xl font-semibold'>
+              {users.length > 0
+                ? `${users.length} usuário${users.length > 1 ? 's' : ''}`
+                : 'Nenhum usuário'}
+            </h2>
+
+            <div className='flex gap-1.5 sm:gap-2 lg:hidden shrink-0'>
+              <Dialog open={isUserDialogOpen} onOpenChange={setIsUserDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button variant='outline' size='sm' className='px-2 sm:px-3'>
+                    <Plus className='w-4 h-4 sm:mr-1' />
+                    <span className='hidden sm:inline'>User</span>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle className='flex items-center gap-2'>
+                      <UserPlus className='w-4 h-4' />
+                      Novo Usuário
+                    </DialogTitle>
+                  </DialogHeader>
+                  <CreateUserForm onSubmit={handleCreateUser} variant='inline' />
+                </DialogContent>
+              </Dialog>
+
+              {users.length > 0 && (
+                <Dialog open={isPostDialogOpen} onOpenChange={setIsPostDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant='outline' size='sm' className='px-2 sm:px-3'>
+                      <PenSquare className='w-4 h-4 sm:mr-1' />
+                      <span className='hidden sm:inline'>Post</span>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle className='flex items-center gap-2'>
+                        <PenSquare className='w-4 h-4' />
+                        Novo Post
+                      </DialogTitle>
+                    </DialogHeader>
+                    <CreatePostForm users={users} onSubmit={handleCreatePost} variant='inline' />
+                  </DialogContent>
+                </Dialog>
+              )}
+            </div>
+          </div>
           <div className='grid gap-6 lg:grid-cols-2 lg:grid-rows-[auto_auto]'>
             <section className='lg:row-span-2 scroll-auto lg:max-h-[88vh] overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-transparent hover:[&::-webkit-scrollbar-thumb]:bg-gray-300 dark:hover:[&::-webkit-scrollbar-thumb]:bg-gray-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:transition-colors'>
               {users.length === 0 ? (
@@ -557,11 +628,11 @@ export function UsersPageClient({
               )}
             </section>
 
-            <div className='lg:col-start-2 lg:row-start-1'>
+            <div className='hidden lg:block lg:col-start-2 lg:row-start-1'>
               <CreateUserForm onSubmit={handleCreateUser} />
             </div>
             {users.length > 0 && (
-              <div className='lg:col-start-2 lg:row-start-2'>
+              <div className='hidden lg:block lg:col-start-2 lg:row-start-2'>
                 <CreatePostForm users={users} onSubmit={handleCreatePost} />
               </div>
             )}
