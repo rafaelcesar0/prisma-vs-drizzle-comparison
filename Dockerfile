@@ -1,4 +1,4 @@
-FROM oven/bun:1.1 AS base
+FROM oven/bun:1.3.5 AS base
 WORKDIR /app
 
 # Instala dependências
@@ -31,8 +31,11 @@ COPY --from=builder /app/package.json package.json
 COPY --from=builder /app/prisma prisma
 COPY --from=builder /app/drizzle.config.ts drizzle.config.ts
 COPY --from=builder /app/prisma.config.ts prisma.config.ts
+COPY --from=builder /app/docker-entrypoint.sh docker-entrypoint.sh
 
 RUN mkdir -p /data
 EXPOSE 3000
 
-CMD ["bun", "run", "start"]
+RUN chmod +x docker-entrypoint.sh
+
+CMD ["./docker-entrypoint.sh"]

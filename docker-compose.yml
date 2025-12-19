@@ -1,0 +1,13 @@
+version: '3.9'
+
+services:
+  app:
+    build: .
+    ports:
+      - '3000:3000'
+    environment:
+      DATABASE_URL: file:/data/local.db
+      DB_FILE_NAME: file:/data/local.db
+    volumes:
+      - ./data:/data
+    command: ["./docker-entrypoint.sh"]
