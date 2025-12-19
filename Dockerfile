@@ -19,6 +19,7 @@ FROM oven/bun:1.3.5-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0
+ENV PORT=3000
 # SQLite persistente via volume externo
 ENV DATABASE_URL="file:/data/local.db"
 
