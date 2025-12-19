@@ -1,36 +1,130 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Prisma vs Drizzle - Comparação Lado a Lado
 
-## Getting Started
+Aplicação Next.js 16 que implementa o mesmo CRUD de usuários e posts usando dois ORMs diferentes: **Drizzle ORM** e **Prisma ORM**.
 
-First, run the development server:
+## Objetivo
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Comparar a experiência de desenvolvimento (DX) e as diferenças de API entre os dois ORMs mais populares do ecossistema TypeScript/Node.js.
+
+## Stack
+
+- **Next.js 16** com App Router e Server Actions
+- **SQLite** via libsql (mesmo banco para ambos)
+- **Drizzle ORM** v0.45
+- **Prisma ORM** v7.2
+- **Tailwind CSS** v4
+- **React 19**
+
+## Rotas
+
+| Rota | ORM | Descrição |
+|------|-----|-----------|
+| `/` | - | Página inicial com links |
+| `/drizzle` | Drizzle | CRUD usando Drizzle ORM |
+| `/prisma` | Prisma | CRUD usando Prisma ORM |
+
+## Observações
+
+### Definição de Schema
+
+**Drizzle** - Schema em TypeScript puro:
+```typescript
+export const users = sqliteTable('users', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  name: text('name').notNull(),
+  email: text('email').unique().notNull(),
+})
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Prisma** - Schema em linguagem própria (`.prisma`):
+```prisma
+model User {
+  id    Int    @id @default(autoincrement())
+  name  String
+  email String @unique
+}
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Queries com Relações
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Drizzle** - API relacional:
+```typescript
+await db.query.users.findMany({
+  with: { posts: true },
+  orderBy: (users, { desc }) => [desc(users.createdAt)],
+})
+```
 
-## Learn More
+**Prisma** - Include pattern:
+```typescript
+await prisma.user.findMany({
+  include: { posts: true },
+  orderBy: { createdAt: 'desc' },
+})
+```
 
-To learn more about Next.js, take a look at the following resources:
+### Insert
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Drizzle**:
+```typescript
+await db.insert(users).values({ name, email })
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Prisma**:
+```typescript
+await prisma.user.create({ data: { name, email } })
+```
 
-## Deploy on Vercel
+### Delete
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Drizzle**:
+```typescript
+await db.delete(users).where(eq(users.id, userId))
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Prisma**:
+```typescript
+await prisma.user.delete({ where: { id: userId } })
+```
+
+## Executando
+
+```bash
+# Instalar dependências
+bun install
+
+# Gerar cliente Prisma
+bun run prisma:generate
+
+# Aplicar schema no banco
+bun run drizzle:push
+bun run prisma:push
+
+# Iniciar dev server
+bun run dev
+```
+
+## Scripts
+
+| Script | Descrição |
+|--------|-----------|
+| `dev` | Inicia servidor de desenvolvimento |
+| `build` | Build de produção |
+
+### Prisma
+
+| Script | Descrição |
+|--------|-----------|
+| `prisma:generate` | Gera cliente Prisma |
+| `prisma:migrate` | Cria e aplica migrations |
+| `prisma:push` | Aplica schema no banco (sem migration) |
+| `prisma:studio` | Abre Prisma Studio |
+
+### Drizzle
+
+| Script | Descrição |
+|--------|-----------|
+| `drizzle:generate` | Gera migrations |
+| `drizzle:migrate` | Aplica migrations |
+| `drizzle:push` | Aplica schema no banco (sem migration) |
+| `drizzle:studio` | Abre Drizzle Studio |
