@@ -93,6 +93,11 @@ export default async function Home() {
 
   return (
     <>
+      <header className="flex items-center gap-1 px-4 py-4 sm:px-6">
+        <span className='text-2xl' aria-label="baleia" role="img">🐳</span>
+        <span className="text-2xl font-bold text-sky-400">Ultrablue</span>
+      </header>
+
       <UsersPageClient
         initialUsers={users}
         drizzleActions={drizzleActions}
@@ -102,7 +107,7 @@ export default async function Home() {
       <section className='border-t bg-background'>
         <div className='max-w-6xl mx-auto px-4 py-6 sm:px-6 sm:py-12 space-y-4 sm:space-y-6'>
           <div className='space-y-1 sm:space-y-2'>
-            <p className='text-primary text-xs sm:text-sm font-medium uppercase tracking-widest'>
+            <p className='text-xs sm:text-sm font-medium uppercase tracking-widest'>
               Comparativo de código
             </p>
             <h2 className='text-xl sm:text-3xl font-bold'>Drizzle x Prisma</h2>
