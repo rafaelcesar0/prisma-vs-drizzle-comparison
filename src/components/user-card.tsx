@@ -86,7 +86,7 @@ export function UserCard({ user, index }: { user: User; index: number }) {
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-4">
             <div
-              className="w-14 h-14 rounded-2xl bg-gradient-to-br from-coral to-coral-light flex items-center justify-center text-white text-xl font-semibold shadow-md"
+              className="w-14 h-14 rounded-2xl bg-linear-to-br from-coral to-coral-light flex items-center justify-center text-white text-xl font-semibold shadow-md"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               {user.name.charAt(0).toUpperCase()}

@@ -21,8 +21,8 @@ export default async function DrizzlePage() {
         deleteUser: deleteUserDrizzle,
         deletePost: deletePostDrizzle,
       }}
-      ormName="Drizzle ORM"
-      ormColor="#c5f74f"
+      ormName='Drizzle ORM'
+      ormColor='#c5f74f'
     />
   )
 }
