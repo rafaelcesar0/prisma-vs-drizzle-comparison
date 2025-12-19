@@ -19,7 +19,7 @@ FROM oven/bun:1.3.5-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0
-ENV PORT=3000
+ENV PORT=3001
 # SQLite persistente via volume externo
 ENV DATABASE_URL="file:/data/local.db"
 
@@ -35,7 +35,7 @@ COPY --from=builder /app/prisma.config.ts prisma.config.ts
 COPY --from=builder /app/docker-entrypoint.sh docker-entrypoint.sh
 
 RUN mkdir -p /data
-EXPOSE 3000
+EXPOSE 3001
 
 RUN chmod +x docker-entrypoint.sh
 
