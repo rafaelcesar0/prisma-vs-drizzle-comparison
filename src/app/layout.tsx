@@ -14,7 +14,12 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 })
 
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: 'Ultrablue - Drizzle vs Prisma',
   description: 'Comparativo técnico detalhado entre Drizzle ORM e Prisma: migrações, tipagem, performance, bundle size e ecossistema.',
   icons: {
@@ -32,8 +37,10 @@ export const metadata: Metadata = {
     locale: 'pt_BR',
     images: [
       {
-        url: '/opengraph-image',
-        alt: '🐋',
+        url: '/whale.png',
+        width: 96,
+        height: 96,
+        alt: 'Whale',
       },
     ],
   },
@@ -43,8 +50,10 @@ export const metadata: Metadata = {
     description: 'Comparativo técnico detalhado entre Drizzle ORM e Prisma',
     images: [
       {
-        url: '/opengraph-image',
-        alt: '🐋',
+        url: '/whale.png',
+        width: 96,
+        height: 96,
+        alt: 'Whale',
       },
     ],
   },
