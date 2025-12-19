@@ -282,32 +282,223 @@ export default async function Home() {
 
           <Card>
             <CardHeader className='p-4 sm:p-6'>
-              <CardTitle className='text-base sm:text-lg'>Análise</CardTitle>
-              <CardDescription className='text-xs sm:text-sm'>Observações focadas em DX, performance e operação.</CardDescription>
+              <CardTitle className='text-base sm:text-lg'>Análise Comparativa Detalhada</CardTitle>
+              <CardDescription className='text-xs sm:text-sm'>Avaliação técnica aprofundada cobrindo DX, performance, arquitetura e operação em produção.</CardDescription>
             </CardHeader>
-            <CardContent>
-              <ul className='list-disc pl-5 space-y-2 text-sm text-muted-foreground'>
-                <li>
-                  <span className='text-foreground font-semibold'>Migrações:</span>{' '}
-                  Drizzle-kit gera SQL legível e roda sem passo de geração; Prisma Migrate mantém histórico completo (bom para times), mas adiciona o passo <code className='font-mono'>prisma migrate</code>/<code className='font-mono'>generate</code> no CI.
-                </li>
-                <li>
-                  <span className='text-foreground font-semibold'>Tipos & validação:</span>{' '}
-                  Drizzle reaproveita os tipos das tabelas direto no código (bom para reutilizar em forms/DTOs); Prisma gera tipos via client (precisa rodar generate). Em ambos os casos, vale usar um validador de runtime (ex.: Zod) para não confiar só na tipagem.
-                </li>
-                <li>
-                  <span className='text-foreground font-semibold'>Tamanho e deploy:</span>{' '}
-                  Drizzle não precisa de client gerado e tende a ser mais leve em bundling/edge; Prisma client é robusto mas maior (cuidado com lambdas frias/edge functions).
-                </li>
-                <li>
-                  <span className='text-foreground font-semibold'>Ergonomia de query:</span>{' '}
-                  Drizzle favorece quem quer controle SQL (builder explícito, fácil de ver o SQL final); Prisma brilha em CRUD rápido com <code className='font-mono'>include</code>/<code className='font-mono'>select</code> e writes aninhados (<code className='font-mono'>create</code> com <code className='font-mono'>posts: {'{'} create: [...] {'}'}</code>).
-                </li>
-                <li>
-                  <span className='text-foreground font-semibold'>Ferramentas:</span>{' '}
-                  Prisma entrega Studio, introspecção e migrations integradas; Drizzle tem CLI simples e SQL direto (ótimo para revisar diffs de banco). Nos dois fluxos, use <code className='font-mono'>revalidatePath</code> ou cache por tags para evitar re-fetch completo após mutações maiores.
-                </li>
-              </ul>
+            <CardContent className='space-y-6'>
+              {/* Migrações */}
+              <div className='space-y-2'>
+                <h4 className='text-foreground font-semibold flex items-center gap-2'>
+                  <span className='text-primary'>01.</span> Sistema de Migrações
+                </h4>
+                <div className='grid sm:grid-cols-2 gap-3 text-sm text-muted-foreground'>
+                  <div className='bg-muted/50 rounded-lg p-3 space-y-2'>
+                    <p className='text-foreground font-medium text-xs uppercase tracking-wide'>Drizzle</p>
+                    <ul className='list-disc pl-4 space-y-1'>
+                      <li>Gera SQL puro e legível via <code className='font-mono text-xs'>drizzle-kit generate</code></li>
+                      <li>Migrações são arquivos <code className='font-mono text-xs'>.sql</code> versionados — fácil de revisar em PR</li>
+                      <li>Suporta <code className='font-mono text-xs'>push</code> para sync direto (dev) ou <code className='font-mono text-xs'>migrate</code> para produção</li>
+                      <li>Não requer passo de geração de client — schema é o source of truth</li>
+                      <li>Rollback manual (você escreve o SQL de down)</li>
+                    </ul>
+                  </div>
+                  <div className='bg-muted/50 rounded-lg p-3 space-y-2'>
+                    <p className='text-foreground font-medium text-xs uppercase tracking-wide'>Prisma</p>
+                    <ul className='list-disc pl-4 space-y-1'>
+                      <li>Histórico completo com <code className='font-mono text-xs'>_prisma_migrations</code> table</li>
+                      <li>Suporta <code className='font-mono text-xs'>migrate dev</code>, <code className='font-mono text-xs'>deploy</code> e <code className='font-mono text-xs'>reset</code></li>
+                      <li>Requer <code className='font-mono text-xs'>prisma generate</code> após cada mudança de schema</li>
+                      <li>Shadow database para detectar drift em dev</li>
+                      <li>Melhor para times grandes com fluxo de aprovação de migrations</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tipos e Validação */}
+              <div className='space-y-2'>
+                <h4 className='text-foreground font-semibold flex items-center gap-2'>
+                  <span className='text-primary'>02.</span> Tipagem e Validação
+                </h4>
+                <div className='grid sm:grid-cols-2 gap-3 text-sm text-muted-foreground'>
+                  <div className='bg-muted/50 rounded-lg p-3 space-y-2'>
+                    <p className='text-foreground font-medium text-xs uppercase tracking-wide'>Drizzle</p>
+                    <ul className='list-disc pl-4 space-y-1'>
+                      <li>Tipos inferidos diretamente do schema TS (<code className='font-mono text-xs'>$inferSelect</code>, <code className='font-mono text-xs'>$inferInsert</code>)</li>
+                      <li>Integração nativa com Zod via <code className='font-mono text-xs'>drizzle-zod</code></li>
+                      <li>Reutilize tipos em forms, APIs e DTOs sem duplicação</li>
+                      <li>Mudanças no schema refletem imediatamente nos tipos</li>
+                      <li>Sem code generation — zero latência no fluxo de dev</li>
+                    </ul>
+                  </div>
+                  <div className='bg-muted/50 rounded-lg p-3 space-y-2'>
+                    <p className='text-foreground font-medium text-xs uppercase tracking-wide'>Prisma</p>
+                    <ul className='list-disc pl-4 space-y-1'>
+                      <li>Tipos gerados em <code className='font-mono text-xs'>node_modules/.prisma/client</code></li>
+                      <li>Tipagem muito precisa incluindo relações aninhadas</li>
+                      <li>Requer <code className='font-mono text-xs'>prisma generate</code> — adiciona passo no CI/CD</li>
+                      <li>Integração com Zod via libs externas (<code className='font-mono text-xs'>zod-prisma-types</code>)</li>
+                      <li>Autocomplete excelente no editor após generate</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Performance e Bundle */}
+              <div className='space-y-2'>
+                <h4 className='text-foreground font-semibold flex items-center gap-2'>
+                  <span className='text-primary'>03.</span> Performance e Bundle Size
+                </h4>
+                <div className='grid sm:grid-cols-2 gap-3 text-sm text-muted-foreground'>
+                  <div className='bg-muted/50 rounded-lg p-3 space-y-2'>
+                    <p className='text-foreground font-medium text-xs uppercase tracking-wide'>Drizzle</p>
+                    <ul className='list-disc pl-4 space-y-1'>
+                      <li>Bundle ~50KB minificado — ideal para edge/serverless</li>
+                      <li>Cold start mínimo — não há client pesado para carregar</li>
+                      <li>Queries compilam para SQL direto sem overhead de runtime</li>
+                      <li>Funciona nativamente em Cloudflare Workers, Vercel Edge</li>
+                      <li>Prepared statements suportados para queries repetidas</li>
+                    </ul>
+                  </div>
+                  <div className='bg-muted/50 rounded-lg p-3 space-y-2'>
+                    <p className='text-foreground font-medium text-xs uppercase tracking-wide'>Prisma</p>
+                    <ul className='list-disc pl-4 space-y-1'>
+                      <li>Client gerado ~2-4MB — impacta lambdas frias</li>
+                      <li>Query Engine em Rust (WASM para edge) adiciona peso</li>
+                      <li>Prisma Accelerate resolve cold start via connection pooling global</li>
+                      <li>Data Proxy para edge runtime (adiciona latência de rede)</li>
+                      <li>Otimizações de query via engine podem ser vantajosas em casos complexos</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Ergonomia de Queries */}
+              <div className='space-y-2'>
+                <h4 className='text-foreground font-semibold flex items-center gap-2'>
+                  <span className='text-primary'>04.</span> Ergonomia de Queries
+                </h4>
+                <div className='grid sm:grid-cols-2 gap-3 text-sm text-muted-foreground'>
+                  <div className='bg-muted/50 rounded-lg p-3 space-y-2'>
+                    <p className='text-foreground font-medium text-xs uppercase tracking-wide'>Drizzle</p>
+                    <ul className='list-disc pl-4 space-y-1'>
+                      <li>Query builder SQL-like: <code className='font-mono text-xs'>db.select().from().where()</code></li>
+                      <li>Fácil ver o SQL gerado — debugging transparente</li>
+                      <li>Relational queries via <code className='font-mono text-xs'>db.query.users.findMany({'{ with: { posts: true } }'})</code></li>
+                      <li>Joins explícitos quando você precisa de controle</li>
+                      <li>Raw SQL com <code className='font-mono text-xs'>sql</code> template literal tipado</li>
+                    </ul>
+                  </div>
+                  <div className='bg-muted/50 rounded-lg p-3 space-y-2'>
+                    <p className='text-foreground font-medium text-xs uppercase tracking-wide'>Prisma</p>
+                    <ul className='list-disc pl-4 space-y-1'>
+                      <li>API declarativa: <code className='font-mono text-xs'>prisma.user.findMany()</code></li>
+                      <li>Nested writes poderosos: <code className='font-mono text-xs'>create {'{ data: { posts: { create: [...] } } }'}</code></li>
+                      <li><code className='font-mono text-xs'>include</code> e <code className='font-mono text-xs'>select</code> para carregar relações</li>
+                      <li>Filtros compostos: <code className='font-mono text-xs'>where: {'{ AND, OR, NOT }'}</code></li>
+                      <li>SQL gerado é abstraído — menos controle, mais conveniência</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Transações */}
+              <div className='space-y-2'>
+                <h4 className='text-foreground font-semibold flex items-center gap-2'>
+                  <span className='text-primary'>05.</span> Transações e Consistência
+                </h4>
+                <div className='grid sm:grid-cols-2 gap-3 text-sm text-muted-foreground'>
+                  <div className='bg-muted/50 rounded-lg p-3 space-y-2'>
+                    <p className='text-foreground font-medium text-xs uppercase tracking-wide'>Drizzle</p>
+                    <ul className='list-disc pl-4 space-y-1'>
+                      <li><code className='font-mono text-xs'>db.transaction(async (tx) =&gt; {'{ ... }'})</code></li>
+                      <li>Rollback automático em exceções</li>
+                      <li>Savepoints suportados para transações aninhadas</li>
+                      <li>Controle total sobre isolation levels</li>
+                    </ul>
+                  </div>
+                  <div className='bg-muted/50 rounded-lg p-3 space-y-2'>
+                    <p className='text-foreground font-medium text-xs uppercase tracking-wide'>Prisma</p>
+                    <ul className='list-disc pl-4 space-y-1'>
+                      <li><code className='font-mono text-xs'>prisma.$transaction([...])</code> para batch</li>
+                      <li>Interactive transactions com callback</li>
+                      <li>Timeout configurável para transações longas</li>
+                      <li>Nested writes são transacionais por padrão</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Ferramentas e Ecossistema */}
+              <div className='space-y-2'>
+                <h4 className='text-foreground font-semibold flex items-center gap-2'>
+                  <span className='text-primary'>06.</span> Ferramentas e Ecossistema
+                </h4>
+                <div className='grid sm:grid-cols-2 gap-3 text-sm text-muted-foreground'>
+                  <div className='bg-muted/50 rounded-lg p-3 space-y-2'>
+                    <p className='text-foreground font-medium text-xs uppercase tracking-wide'>Drizzle</p>
+                    <ul className='list-disc pl-4 space-y-1'>
+                      <li><code className='font-mono text-xs'>drizzle-kit studio</code> — UI web para explorar dados</li>
+                      <li>CLI simples: <code className='font-mono text-xs'>generate</code>, <code className='font-mono text-xs'>migrate</code>, <code className='font-mono text-xs'>push</code>, <code className='font-mono text-xs'>pull</code></li>
+                      <li>Introspecção de banco existente via <code className='font-mono text-xs'>pull</code></li>
+                      <li>Plugins: drizzle-zod, drizzle-valibot, drizzle-typebox</li>
+                      <li>Comunidade crescendo rápido, docs melhorando</li>
+                    </ul>
+                  </div>
+                  <div className='bg-muted/50 rounded-lg p-3 space-y-2'>
+                    <p className='text-foreground font-medium text-xs uppercase tracking-wide'>Prisma</p>
+                    <ul className='list-disc pl-4 space-y-1'>
+                      <li>Prisma Studio — GUI desktop/web completa</li>
+                      <li>Prisma Accelerate — connection pooling global</li>
+                      <li>Prisma Pulse — real-time change data capture</li>
+                      <li>Introspecção robusta de bancos legados</li>
+                      <li>Ecossistema maduro, docs extensivos, comunidade enorme</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quando usar cada um */}
+              <div className='space-y-2'>
+                <h4 className='text-foreground font-semibold flex items-center gap-2'>
+                  <span className='text-primary'>07.</span> Quando Usar Cada Um
+                </h4>
+                <div className='grid sm:grid-cols-2 gap-3 text-sm'>
+                  <div className='bg-drizzle/10 border border-drizzle/20 rounded-lg p-3 space-y-2'>
+                    <p className='text-drizzle font-medium text-xs uppercase tracking-wide'>Escolha Drizzle se:</p>
+                    <ul className='list-disc pl-4 space-y-1 text-muted-foreground'>
+                      <li>Precisa de bundle leve para edge/serverless</li>
+                      <li>Quer controle total sobre SQL gerado</li>
+                      <li>Prefere schema em TypeScript puro</li>
+                      <li>Valoriza zero code generation no workflow</li>
+                      <li>Trabalha com queries complexas/otimizadas</li>
+                      <li>Usa Cloudflare Workers ou Vercel Edge</li>
+                    </ul>
+                  </div>
+                  <div className='bg-prisma/10 border border-prisma/20 rounded-lg p-3 space-y-2'>
+                    <p className='text-prisma font-medium text-xs uppercase tracking-wide'>Escolha Prisma se:</p>
+                    <ul className='list-disc pl-4 space-y-1 text-muted-foreground'>
+                      <li>Prioriza DX e produtividade em CRUD</li>
+                      <li>Time grande com fluxo de migrations estruturado</li>
+                      <li>Precisa de nested writes frequentes</li>
+                      <li>Quer ecossistema maduro e suporte enterprise</li>
+                      <li>Usa Prisma Accelerate/Pulse para features avançadas</li>
+                      <li>Prefere abstração sobre controle SQL</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Nota sobre Next.js */}
+              <div className='bg-primary/10 border border-primary/20 rounded-lg p-4 text-sm'>
+                <p className='text-primary font-medium mb-2'>Nota sobre Server Actions e Caching</p>
+                <p className='text-muted-foreground'>
+                  Em ambos os ORMs, ao usar Server Actions do Next.js, lembre-se de chamar{' '}
+                  <code className='font-mono text-xs'>revalidatePath()</code> ou{' '}
+                  <code className='font-mono text-xs'>revalidateTag()</code> após mutações para invalidar o cache corretamente.
+                  Para queries frequentes, considere usar <code className='font-mono text-xs'>unstable_cache</code> com tags para controle granular de invalidação.
+                </p>
+              </div>
             </CardContent>
           </Card>
         </div>
