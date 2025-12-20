@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     description: 'Comparativo técnico detalhado entre Drizzle ORM e Prisma',
     type: 'website',
     locale: 'pt_BR',
-    images: 'https://drizzlevsprisma.ultrablue.cloud/whale2.png'
+    images: { url: 'https://drizzlevsprisma.ultrablue.cloud/whale2.png' },
   },
   twitter: {
     card: 'summary_large_image',
