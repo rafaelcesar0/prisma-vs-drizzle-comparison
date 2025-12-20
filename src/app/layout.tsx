@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'pt_BR',
     images: {
-      url: 'https://drizzlevsprisma.ultrablue.cloud/whale2.png',
+      url: 'https://drizzlevsprisma.ultrablue.cloud/whale.png',
       width: 100,
       height: 100,
     },
