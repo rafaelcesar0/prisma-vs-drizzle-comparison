@@ -30,6 +30,8 @@ export const metadata: Metadata = {
     title: 'Ultrablue - Drizzle vs Prisma',
     description: 'Comparativo técnico detalhado entre Drizzle ORM e Prisma',
     type: 'website',
+    locale: 'pt_BR',
+    images: '/whale2.png'
   },
   twitter: {
     card: 'summary_large_image',
